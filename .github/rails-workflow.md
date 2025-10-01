@@ -34,6 +34,7 @@ All Rails apps will be created under the `src` folder. Replace `<project-folder>
 - Add `rspec-rails` to Gemfile:
   ```sh
     bundle add rspec-rails --group="development,test"
+    bundle add factory_bot_rails --group="development,test"
     bundle install
   ```
 - Rspec install:
