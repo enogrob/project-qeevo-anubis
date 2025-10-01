@@ -61,14 +61,9 @@ Anubis é um serviço Rails destinado a orquestrar o envio de inscrições/aluno
 ## 3. Arquitetura (Rails + Componentes)
 ### Visão Macro (Mermaid)
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 
-  'primaryColor': '#E2F5ED',
-  'primaryTextColor':'#1F2933',
-  'primaryBorderColor':'#7FB8A5',
-  'secondaryColor':'#DDEFFC',
-  'tertiaryColor':'#FBE9EC',
-  'lineColor':'#3A5F85',
-  'fontFamily': 'Inter,Segoe UI,Arial'
+%%{init: {'theme':'base','themeVariables': {
+  'primaryColor':'#E2F5ED','primaryBorderColor':'#3F8A63','primaryTextColor':'#1F2933',
+  'secondaryColor':'#DDEFFC','tertiaryColor':'#FBE9EC','lineColor':'#3A5F85','fontFamily':'Inter,Segoe UI,Arial'
 }}%%
 flowchart LR
   subgraph IngressLayer["🚪 Ingress API\n(Controllers)"]
@@ -127,13 +122,9 @@ Embora Order pareça protótipo inicial, demonstra o padrão de ciclo de vida or
 ### ERD (Atual – simplificado)
 erDiagram
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 
-  'primaryColor':'#DDF6F2',
-  'primaryTextColor':'#1F2933',
-  'primaryBorderColor':'#63B5A6',
-  'lineColor':'#3A7573',
-  'secondaryColor':'#FBE9EC',
-  'tertiaryColor':'#E2F5ED'
+%%{init: {'theme':'base','themeVariables': {
+  'primaryColor':'#E2F5ED','primaryBorderColor':'#3F8A63','primaryTextColor':'#1F2933',
+  'secondaryColor':'#DDEFFC','tertiaryColor':'#FBE9EC','lineColor':'#3A5F85'
 }}}%%
 erDiagram
   ORDERS ||--o{ ORDER_EVENTS : "(futuro)" 
@@ -173,8 +164,6 @@ Roteamento em `config/routes.rb`:
 | GET | /up | rails/health#show | Health check interno Rails padrão |
 | GET | /health | health#index | Status geral (DB + Kafka) |
 | GET | /health/kafka | health#kafka | Detalhes da conexão Kafka |
-| POST | /enrollments | enrollments#create | Ingest de inscrição (normaliza & publica evento) |
-| GET | /enrollments/:id | enrollments#show | Consulta placeholder de inscrição |
 
 ### Exemplo `/health`
 Resposta 200 (OK):
@@ -187,9 +176,9 @@ Resposta 200 (OK):
 ```
 
 ### Futuro (Sugestões)
-- POST /enrollments
-- GET /orders/:id
-- POST /orders/:id/ship
+- POST /enrollments (ingestão de inscrição)
+- GET /orders/:id (consulta estado)
+- POST /orders/:id/ship (acionar transição)
 - Observabilidade: /metrics (Prometheus)
 
 ---
@@ -213,7 +202,8 @@ Config do producer (rdkafka): acks=all, retries=3, backoff=300ms, compression=sn
 - user.created
 - user.updated
 - user.deleted
-(Atualmente placeholders com logging.)
+
+Implementação atual realiza logging e estrutura pontos para futura lógica (ex: criação/atualização de perfis). Erros são capturados e delegados a rotina genérica via `handle_processing_error` (definida em `ApplicationConsumer`).
 
 ### Health Check Kafka
 `Kafka::HealthCheckService` coleta metadata (brokers, topics) e expõe via `/health/kafka`.
@@ -249,7 +239,10 @@ Métodos auxiliares: `can_be_cancelled?`, `can_be_refunded?`, `display_state`.
 
 ### Diagrama de Estados (Order)
 ```mermaid
-%%{init: {'theme':'base','themeVariables': {'primaryColor':'#E2F5ED','primaryTextColor':'#1F2933','primaryBorderColor':'#3F8A63','secondaryColor':'#DDEFFC','tertiaryColor':'#FBE9EC','lineColor':'#3A5F85'}}}%%
+%%{init: {'theme':'base','themeVariables': {
+  'primaryColor':'#E2F5ED','primaryBorderColor':'#3F8A63','primaryTextColor':'#1F2933',
+  'secondaryColor':'#DDEFFC','tertiaryColor':'#FBE9EC','lineColor':'#3A5F85'
+}}}%%
 stateDiagram-v2
   [*] --> pending : criação
   pending --> processing : process()
@@ -315,12 +308,8 @@ Pipeline sugerido:
 ### Diagrama (Dev → Deploy)
 ```mermaid
 %%{init: {'theme':'base','themeVariables': {
-  'primaryColor':'#E5EFF5',
-  'primaryTextColor':'#1F2933',
-  'primaryBorderColor':'#7C93A6',
-  'secondaryColor':'#DDEFFC',
-  'tertiaryColor':'#E2F5ED',
-  'lineColor':'#4A5568'
+  'primaryColor':'#E2F5ED','primaryBorderColor':'#3F8A63','primaryTextColor':'#1F2933',
+  'secondaryColor':'#DDEFFC','tertiaryColor':'#FBE9EC','lineColor':'#3A5F85'
 }}}%%
 flowchart LR
   Dev["💻 Código"] --> Test["🧪 RSpec"]
@@ -339,9 +328,13 @@ flowchart LR
   class Prod risk;
 ```
 
-### Sequência (Ingestão de Inscrição)
+### (Planejado) Sequência Futura – Ingestão de Inscrição
+Ainda não implementado. Exemplo proposto de fluxo (placeholder para quando o endpoint existir):
 ```mermaid
-%%{init: {'theme':'base','themeVariables': {'primaryColor':'#E5EFF5','primaryTextColor':'#1F2933','primaryBorderColor':'#7C93A6','secondaryColor':'#DDEFFC','tertiaryColor':'#E2F5ED','lineColor':'#4A5568'}}}%%
+%%{init: {'theme':'base','themeVariables': {
+  'primaryColor':'#E2F5ED','primaryBorderColor':'#3F8A63','primaryTextColor':'#1F2933',
+  'secondaryColor':'#DDEFFC','tertiaryColor':'#FBE9EC','lineColor':'#3A5F85'
+}}}%%
 sequenceDiagram
   autonumber
   participant C as 🧑‍💻 Cliente
@@ -430,9 +423,9 @@ Log útil: procurar por `Racecar processed message` e `Successfully produced mes
 | Alta | Normalização de payload | Infra Domínio |
 | Média | DLQ + Retry organizado | Resiliência |
 | Média | Métricas Prometheus | Observabilidade |
-| Média | Persistir histórico de transições | Auditoria |
-| Baixa | Schema Registry | Governança |
-| Baixa | OpenTelemetry tracing | Observabilidade |
+| Média | Persistir histórico de transições (Order) | Auditoria |
+| Baixa | Schema Registry (Avro/JSON Schema) | Governança |
+| Baixa | OpenTelemetry tracing distribuído | Observabilidade |
 
 ---
 ## Apêndice A – Referências de Código
