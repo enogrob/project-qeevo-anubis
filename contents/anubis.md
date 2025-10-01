@@ -173,6 +173,8 @@ Roteamento em `config/routes.rb`:
 | GET | /up | rails/health#show | Health check interno Rails padrão |
 | GET | /health | health#index | Status geral (DB + Kafka) |
 | GET | /health/kafka | health#kafka | Detalhes da conexão Kafka |
+| POST | /enrollments | enrollments#create | Ingest de inscrição (normaliza & publica evento) |
+| GET | /enrollments/:id | enrollments#show | Consulta placeholder de inscrição |
 
 ### Exemplo `/health`
 Resposta 200 (OK):
@@ -244,6 +246,24 @@ Métodos auxiliares: `can_be_cancelled?`, `can_be_refunded?`, `display_state`.
 - Guard Clauses por destino
 - Persistir histórico de transições
 - Timeout transitions (ex: processing → cancelled se expirar)
+
+### Diagrama de Estados (Order)
+```mermaid
+%%{init: {'theme':'base','themeVariables': {'primaryColor':'#E2F5ED','primaryTextColor':'#1F2933','primaryBorderColor':'#3F8A63','secondaryColor':'#DDEFFC','tertiaryColor':'#FBE9EC','lineColor':'#3A5F85'}}}%%
+stateDiagram-v2
+  [*] --> pending : criação
+  pending --> processing : process()
+  processing --> shipped : ship()
+  shipped --> delivered : deliver()
+  pending --> cancelled : cancel()
+  processing --> cancelled : cancel()
+  delivered --> refunded : refund()
+  cancelled --> refunded : refund()
+  note right of processing : Emite evento\norder.processing
+  note right of shipped : Emite evento\norder.shipped
+  note right of delivered : Emite evento\norder.delivered
+  note right of refunded : Emite evento\norder.refunded
+```
 
 ---
 ## 9. Serviços Internos
@@ -317,6 +337,25 @@ flowchart LR
   class Dev,Test,Lint,Sec step;
   class Build,Deploy infra;
   class Prod risk;
+```
+
+### Sequência (Ingestão de Inscrição)
+```mermaid
+%%{init: {'theme':'base','themeVariables': {'primaryColor':'#E5EFF5','primaryTextColor':'#1F2933','primaryBorderColor':'#7C93A6','secondaryColor':'#DDEFFC','tertiaryColor':'#E2F5ED','lineColor':'#4A5568'}}}%%
+sequenceDiagram
+  autonumber
+  participant C as 🧑‍💻 Cliente
+  participant API as 🚪 /enrollments
+  participant SVC as ⚙️ EnrollmentIngestService
+  participant K as 📨 Kafka
+  participant EVT as 🔍 Consumidor Futuro
+  C->>API: POST /enrollments (payload)
+  API->>SVC: call(payload)
+  SVC->>SVC: valida & normaliza
+  SVC-->>K: produce enrollment.received
+  SVC-->>API: Result(success,id,normalized)
+  API-->>C: 201 {id,status,normalized}
+  K-->>EVT: evento async (futuro processamento)
 ```
 
 ---
