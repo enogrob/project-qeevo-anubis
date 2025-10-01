@@ -61,7 +61,15 @@ Anubis é um serviço Rails destinado a orquestrar o envio de inscrições/aluno
 ## 3. Arquitetura (Rails + Componentes)
 ### Visão Macro (Mermaid)
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#F0FFF4','primaryTextColor':'#2D3748','primaryBorderColor':'#C6F6D5','secondaryColor':'#EBF8FF','tertiaryColor':'#FFF5F5','lineColor':'#3182CE'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': { 
+  'primaryColor': '#E2F5ED',
+  'primaryTextColor':'#1F2933',
+  'primaryBorderColor':'#7FB8A5',
+  'secondaryColor':'#DDEFFC',
+  'tertiaryColor':'#FBE9EC',
+  'lineColor':'#3A5F85',
+  'fontFamily': 'Inter,Segoe UI,Arial'
+}}%%
 flowchart LR
   subgraph IngressLayer["🚪 Ingress API\n(Controllers)"]
     Ingress["🛎️ Requests"]
@@ -83,9 +91,9 @@ flowchart LR
   Orchestrator --> StateMachine
   DevTools -. introspecção .-> Orchestrator
 
-  classDef core fill:#F0FFF4,stroke:#38A169,stroke-width:2px;
-  classDef infra fill:#EBF8FF,stroke:#3182CE,stroke-width:2px;
-  classDef special fill:#FFF5F5,stroke:#E53E3E,stroke-width:2px;
+  classDef core fill:#E2F5ED,stroke:#3F8A63,stroke-width:1.5px,color:#1F2933;
+  classDef infra fill:#DDEFFC,stroke:#3A5F85,stroke-width:1.5px,color:#1F2933;
+  classDef special fill:#FBE9EC,stroke:#C74B5A,stroke-width:1.5px,color:#1F2933;
   class Orchestrator,StateMachine core;
   class DB,KafkaPub,KafkaSub infra;
   class DevTools special;
@@ -119,7 +127,14 @@ Embora Order pareça protótipo inicial, demonstra o padrão de ciclo de vida or
 ### ERD (Atual – simplificado)
 erDiagram
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor':'#E6FFFA','primaryTextColor':'#2D3748','primaryBorderColor':'#81E6D9','lineColor':'#319795','secondaryColor':'#FFF5F5','tertiaryColor':'#F0FFF4'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': { 
+  'primaryColor':'#DDF6F2',
+  'primaryTextColor':'#1F2933',
+  'primaryBorderColor':'#63B5A6',
+  'lineColor':'#3A7573',
+  'secondaryColor':'#FBE9EC',
+  'tertiaryColor':'#E2F5ED'
+}}}%%
 erDiagram
   ORDERS ||--o{ ORDER_EVENTS : "(futuro)" 
   ORDERS {
@@ -279,7 +294,14 @@ Pipeline sugerido:
 
 ### Diagrama (Dev → Deploy)
 ```mermaid
-%%{init: {'theme':'base','themeVariables': {'primaryColor':'#F7FAFC','primaryTextColor':'#2D3748','primaryBorderColor':'#CBD5E0','secondaryColor':'#E6FFFA','tertiaryColor':'#FFF5F5','lineColor':'#4A5568'}}}%%
+%%{init: {'theme':'base','themeVariables': {
+  'primaryColor':'#E5EFF5',
+  'primaryTextColor':'#1F2933',
+  'primaryBorderColor':'#7C93A6',
+  'secondaryColor':'#DDEFFC',
+  'tertiaryColor':'#E2F5ED',
+  'lineColor':'#4A5568'
+}}}%%
 flowchart LR
   Dev["💻 Código"] --> Test["🧪 RSpec"]
   Test --> Lint["👮 Rubocop"]
@@ -289,9 +311,9 @@ flowchart LR
   Deploy --> Prod["🌍 Produção"]
   Prod --> Obs["📊 Logs & Métricas"]
 
-  classDef step fill:#F0FFF4,stroke:#38A169,stroke-width:2px;
-  classDef risk fill:#FFF5F5,stroke:#E53E3E,stroke-width:2px;
-  classDef infra fill:#E6FFFA,stroke:#319795,stroke-width:2px;
+  classDef step fill:#E2F5ED,stroke:#3F8A63,stroke-width:1.5px,color:#1F2933;
+  classDef risk fill:#FBE9EC,stroke:#C74B5A,stroke-width:1.5px,color:#1F2933;
+  classDef infra fill:#DDEFFC,stroke:#3A5F85,stroke-width:1.5px,color:#1F2933;
   class Dev,Test,Lint,Sec step;
   class Build,Deploy infra;
   class Prod risk;
