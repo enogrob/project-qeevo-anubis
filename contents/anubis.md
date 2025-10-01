@@ -61,13 +61,34 @@ Anubis é um serviço Rails destinado a orquestrar o envio de inscrições/aluno
 ## 3. Arquitetura (Rails + Componentes)
 ### Visão Macro (Mermaid)
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#F0FFF4','primaryTextColor':'#2D3748','primaryBorderColor':'#C6F6D5','secondaryColor':'#EBF8FF','tertiaryColor':'#FFF5F5','lineColor':'#3182CE'}}}%%
 flowchart LR
-  Ingress["Ingress API\n(Controllers)"] --> Orchestrator["Serviços / Regras"]
-  Orchestrator --> DB[(PostgreSQL)]
-  Orchestrator --> KafkaPub[[Produtor Kafka]]
-  KafkaSub[[Consumidores Kafka]] --> Orchestrator
-  Orchestrator --> StateMachine["AASM State Machines"]
-  DevTools["Tidewave (Dev)"] -. introspecção .-> Orchestrator
+  subgraph IngressLayer["🚪 Ingress API\n(Controllers)"]
+    Ingress["🛎️ Requests"]
+  end
+  subgraph Core["🧠 Orquestração / Serviços"]
+    Orchestrator["⚙️ Service Layer"]
+    StateMachine["🔄 AASM States"]
+  end
+  subgraph Infra["🧩 Infra"]
+    DB[(🐘 PostgreSQL)]
+    KafkaPub[[📨 Kafka Producer]]
+    KafkaSub[[📥 Kafka Consumers]]
+  end
+  DevTools["🌊 Tidewave (Dev)"]
+
+  Ingress --> Orchestrator --> DB
+  Orchestrator --> KafkaPub
+  KafkaSub --> Orchestrator
+  Orchestrator --> StateMachine
+  DevTools -. introspecção .-> Orchestrator
+
+  classDef core fill:#F0FFF4,stroke:#38A169,stroke-width:2px;
+  classDef infra fill:#EBF8FF,stroke:#3182CE,stroke-width:2px;
+  classDef special fill:#FFF5F5,stroke:#E53E3E,stroke-width:2px;
+  class Orchestrator,StateMachine core;
+  class DB,KafkaPub,KafkaSub infra;
+  class DevTools special;
 ```
 
 ### Componentes Principais
@@ -96,15 +117,22 @@ Embora Order pareça protótipo inicial, demonstra o padrão de ciclo de vida or
 ---
 ## 5. Modelo de Dados (ERD & Tabelas)
 ### ERD (Atual – simplificado)
-```mermaid
 erDiagram
-  ORDERS ||--o{ EVENTS : "(futuro log de eventos)"
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor':'#E6FFFA','primaryTextColor':'#2D3748','primaryBorderColor':'#81E6D9','lineColor':'#319795','secondaryColor':'#FFF5F5','tertiaryColor':'#F0FFF4'}}}%%
+erDiagram
+  ORDERS ||--o{ ORDER_EVENTS : "(futuro)" 
   ORDERS {
-    decimal total
-    string status
-    string aasm_state
-    datetime created_at
-    datetime updated_at
+    DECIMAL total "Valor total (>0)"
+    STRING status "Última mensagem"
+    STRING aasm_state "Estado máquina"
+    DATETIME created_at
+    DATETIME updated_at
+  }
+  ORDER_EVENTS {
+    STRING event_type
+    JSON payload
+    DATETIME created_at
   }
 ```
 
@@ -251,14 +279,22 @@ Pipeline sugerido:
 
 ### Diagrama (Dev → Deploy)
 ```mermaid
+%%{init: {'theme':'base','themeVariables': {'primaryColor':'#F7FAFC','primaryTextColor':'#2D3748','primaryBorderColor':'#CBD5E0','secondaryColor':'#E6FFFA','tertiaryColor':'#FFF5F5','lineColor':'#4A5568'}}}%%
 flowchart LR
-  Dev[Dev Code] --> Test[RSpec]
-  Test --> Lint[Rubocop]
-  Lint --> Sec[Brakeman]
-  Sec --> Build[Docker Build]
-  Build --> Deploy[Kamal Deploy]
-  Deploy --> Prod[Produção]
-  Prod --> Obs[Logs & Métricas]
+  Dev["💻 Código"] --> Test["🧪 RSpec"]
+  Test --> Lint["👮 Rubocop"]
+  Lint --> Sec["🛡️ Brakeman"]
+  Sec --> Build["🐳 Docker Build"]
+  Build --> Deploy["⚙️ Kamal Deploy"]
+  Deploy --> Prod["🌍 Produção"]
+  Prod --> Obs["📊 Logs & Métricas"]
+
+  classDef step fill:#F0FFF4,stroke:#38A169,stroke-width:2px;
+  classDef risk fill:#FFF5F5,stroke:#E53E3E,stroke-width:2px;
+  classDef infra fill:#E6FFFA,stroke:#319795,stroke-width:2px;
+  class Dev,Test,Lint,Sec step;
+  class Build,Deploy infra;
+  class Prod risk;
 ```
 
 ---
