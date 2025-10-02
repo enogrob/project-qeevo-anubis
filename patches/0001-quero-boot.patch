@@ -1,0 +1,18 @@
+diff --git a/docker-compose.yml b/docker-compose.yml
+index d56bdef..057f138 100644
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -55,9 +55,9 @@ services:
+     volumes:
+       - ./quero_bolsa:/querobolsa
+       - querobolsa-bundle:/usr/local/bundle
+-      - $HOME/.ssh/id_rsa:/root/.ssh/id_rsa:ro
+-      - $HOME/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub:ro
+-      - $HOME/.ssh/known_hosts:/root/.ssh/known_hosts
++      - /home/roberto/.ssh/id_rsa:/root/.ssh/id_rsa:ro
++      - /home/roberto/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub:ro
++      - /home/roberto/.ssh/known_hosts:/root/.ssh/known_hosts
+     depends_on:
+       - postgres13
+       - redis
+r

@@ -1,0 +1,184 @@
+diff --git a/docker-compose.yml b/docker-compose.yml
+index d56bdef..14d9c7e 100644
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -1560,6 +1560,22 @@ services:
+     volumes:
+       - postgres13:/var/lib/postgresql/data
+ 
++  postgres17:
++    image: postgis/postgis:17-3.5
++    ports:
++      - 5432:5432
++    volumes:
++      - crm_pg_data:/var/lib/postgresql/data
++    environment:
++      POSTGRES_USER: postgres
++      POSTGRES_PASSWORD: postgres
++      POSTGRES_DB: quero_crm_development
++    healthcheck:
++      test: ["CMD-SHELL", "pg_isready"]
++      interval: 1s
++      timeout: 5s
++      retries: 5
++
+   mysql:
+     image: mysql:8.0.32
+     environment:
+@@ -1897,6 +1913,31 @@ services:
+     depends_on:
+       - postgres13
+ 
++  anubis:
++    tty: true
++    stdin_open: true
++    build:
++      context: ./anubis
++      dockerfile: Dockerfile.dev
++    env_file:
++      - envs/global-secret.env
++      - envs/anubis.env
++      # Uncomment the next line if you decide to store secrets separately for anubis
++      # - envs/anubis-secret.env
++    working_dir: /app
++    command: make quero-boot-startup
++    ports:
++      - 3007:3000
++    volumes:
++      - ./anubis:/app:cached
++      - anubis-bundle:/usr/local/bundle:delegated
++      - anubis-node-modules:/app/node_modules:delegated
++      # Optionally persist shell history (like some other services):
++      # - root-home:/root
++    depends_on:
++      - postgres17 
++      - kafka
++
+ volumes:
+   guia_faculdade-node-modules:
+   guia_faculdade-bundle:
+@@ -2108,3 +2149,7 @@ volumes:
+ 
+   # crm
+   crm_pg_data:
++
++  # anubis
++  anubis-bundle:
++  anubis-node-modules:
+diff --git a/envs/anubis-secret.env b/envs/anubis-secret.env
+new file mode 100644
+index 0000000..bca74fd
+--- /dev/null
++++ b/envs/anubis-secret.env
+@@ -0,0 +1,41 @@
++# Anubis Secret Environment Variables
++# DO NOT COMMIT THIS FILE TO VERSION CONTROL
++
++# Rails Master Key (generate with: rails credentials:edit)
++RAILS_MASTER_KEY=
++
++# Secret Key Base (generate with: rails secret)
++SECRET_KEY_BASE=
++
++# Database Password (if needed for production)
++DATABASE_PASSWORD=
++
++# External API Keys
++EXTERNAL_API_KEY=
++
++# JWT Secret for token authentication
++JWT_SECRET=
++
++# Encryption Keys
++ENCRYPTION_KEY=
++
++# Third-party API Keys
++KROTON_API_KEY=
++ESTACIO_API_KEY=
++EAD_COM_API_KEY=
++GUIA_CARREIRA_API_KEY=
++MUNDO_VESTIBULAR_API_KEY=
++
++# OAuth Configuration
++OAUTH_CLIENT_ID=
++OAUTH_CLIENT_SECRET=
++
++# Email Configuration (if needed)
++SMTP_USERNAME=
++SMTP_PASSWORD=
++
++# Webhook Secrets
++WEBHOOK_SECRET=
++
++# Production Database URL (if different)
++# DATABASE_URL=postgresql://user:password@host:5432/anubis_production
+\ No newline at end of file
+diff --git a/envs/anubis.env b/envs/anubis.env
+new file mode 100644
+index 0000000..9f69562
+--- /dev/null
++++ b/envs/anubis.env
+@@ -0,0 +1,62 @@
++# Anubis Rails Application Environment Variables
++#RAILS_ENV=development
++#DATABASE_URL=postgresql://postgres:postgres@postgres17:5432/anubis_development
++
++DB_NAME=anubis_development
++DB_HOST=postgres17
++DB_USER=postgres
++DB_PASSWORD=postgres
++DB_PORT=5432
++
++KAFKA_BROKERS=kafka:9092
++KAFKA_GROUP_ID=anubis-consumers
++KAFKA_CLIENT_ID=anubis-app
++BINDING=0.0.0.0
++PORT=3000
++
++KAFKA_BOOTSTRAP_SERVERS=kafka:9092
++KAFKA_SECURITY_MECHANISM=PLAIN
++KAFKA_SECURITY_USERNAME=admin
++KAFKA_SECURITY_PASSWORD=admin-secret
++KAFKA_SECURITY_PROTOCOL=sasl_plaintext
++
++# Rails Configuration
++RAILS_LOG_LEVEL=debug
++RAILS_SERVE_STATIC_FILES=true
++
++# Sidekiq Configuration (if needed later)
++SIDEKIQ_CONCURRENCY=5
++
++# Application URLs
++ANUBIS_BASE_URL=http://localhost:3007
++QUERO_BOLSA_URL=http://quero_bolsa:3000
++QUERO_CRM_URL=http://quero-crm:8055
++
++# Tidewave Configuration
++TIDEWAVE_ENABLED=true
++
++# Health Check
++HEALTH_CHECK_PATH=/health
++
++# Database Connection Pool
++DATABASE_POOL=5
++DATABASE_TIMEOUT=5000
++
++# Kafka Consumer Configuration
++KAFKA_SESSION_TIMEOUT=30000
++KAFKA_HEARTBEAT_INTERVAL=10000
++KAFKA_MAX_POLL_RECORDS=100
++
++# Cache Configuration (using memory store since no Redis)
++CACHE_STORE=memory_store
++
++# Action Cable (using async adapter since no Redis)
++ACTION_CABLE_ADAPTER=async
++
++# Bundle Configuration
++BUNDLE_PATH=/usr/local/bundle
++BUNDLE_JOBS=4
++BUNDLE_RETRY=3
++
++# Node.js Configuration
++NODE_ENV=development
+\ No newline at end of file
