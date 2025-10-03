@@ -118,6 +118,9 @@ rails g model SubscriptionEvent subscription:references status:string operation_
 
 ### 🏗️ Visão Geral do Sistema (Overview)
 
+<details>
+<summary>🏗️ Visualizar Diagrama de Visão Geral do Sistema</summary>
+
 ```mermaid
 %%{init: {
   'theme':'base',
@@ -185,6 +188,8 @@ flowchart TD
     class DB,KAFKA storage
 ```
 
+</details>
+
 **📋 Explicação da Visão Geral:**
 
 O Anubis atua como um **orquestrador central** que recebe dados de alunos pagantes de múltiplos marketplaces educacionais e os distribui para as APIs das instituições de ensino superior. O fluxo é unidirecional e assíncrono:
@@ -196,6 +201,9 @@ O Anubis atua como um **orquestrador central** que recebe dados de alunos pagant
 - **Monitoramento**: Cada operação é logada para auditoria e debugging
 
 ### 🔧 Arquitetura de Serviços
+
+<details>
+<summary>🔧 Visualizar Diagrama da Arquitetura de Serviços</summary>
 
 ```mermaid
 %%{init: {
@@ -261,6 +269,8 @@ flowchart LR
     class API_CLIENT,EVENT_LOG output
 ```
 
+</details>
+
 **⚙️ Explicação da Arquitetura de Serviços:**
 
 Esta arquitetura modular divide o Anubis em **componentes especializados** que trabalham em conjunto:
@@ -280,6 +290,9 @@ Esta arquitetura modular divide o Anubis em **componentes especializados** que t
   - **Event Logger**: Registra todos os eventos para auditoria
 
 #### 📋 Fluxo Register Sync
+
+<details>
+<summary>📋 Visualizar Diagrama do Fluxo Register Sync</summary>
 
 ```mermaid
 %%{init: {
@@ -361,6 +374,8 @@ flowchart TD
     class SUCCESS,ERROR,RETRY endNode
 ```
 
+</details>
+
 **🔄 Explicação do Register Sync:**
 
 O **Register Sync** é o processo principal de sincronização em tempo real que processa cada inscrição individualmente:
@@ -391,6 +406,9 @@ O **Register Sync** é o processo principal de sincronização em tempo real que
    - Escalona para intervenção manual após limite de tentativas
 
 #### ⏰ Fluxo Register Cron
+
+<details>
+<summary>⏰ Visualizar Diagrama do Fluxo Register Cron</summary>
 
 ```mermaid
 %%{init: {
@@ -473,6 +491,8 @@ flowchart TD
     class COMPLETE,ERROR_HANDLER,SCHEDULE_RETRY endNode
 ```
 
+</details>
+
 **⏰ Explicação do Register Cron:**
 
 O **Register Cron** é o processo batch que executa periodicamente para processar volumes maiores de dados:
@@ -508,6 +528,9 @@ O **Register Cron** é o processo batch que executa periodicamente para processa
 - **Cron**: Processa lotes de inscrições em intervalos programados
 
 #### 🔍 Fluxo Checker
+
+<details>
+<summary>🔍 Visualizar Diagrama do Fluxo Checker</summary>
 
 ```mermaid
 %%{init: {
@@ -606,6 +629,8 @@ flowchart TD
     class SUCCESS,PENDING,FAILED,RETRY_NEEDED decision
     class SCHEDULE_NEXT,TRIGGER_RETRY,COMPLETE endNode
 ```
+
+</details>
 
 **🔍 Explicação do Fluxo Checker:**
 
