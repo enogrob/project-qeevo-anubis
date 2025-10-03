@@ -897,6 +897,343 @@ Garantir que todas as inscrições enviadas sejam devidamente processadas pelas 
 - **Não incluído**: Agendamento customizado de envios
 - **Não incluído**: Relatórios financeiros ou de cobrança
 
+## 🛠️ Especificações Técnicas Rails
+
+### 📦 Stack Tecnológico
+- **Framework**: Rails 8.0.3
+- **Ruby Version**: 3.4.5
+- **Database**: PostgreSQL 17
+- **Job Processing**: Solid Queue (produção), Async (desenvolvimento)
+- **Cache**: Solid Cache
+- **WebSocket**: Solid Cable
+- **Deployment**: Kamal + Docker
+
+### 🏗️ Arquitetura de Componentes Rails
+
+#### 📋 Models & Associations
+```ruby
+# app/models/integration.rb
+class Integration < ApplicationRecord
+  has_many :integration_filters, dependent: :destroy
+  has_many :integration_tokens, dependent: :destroy
+  has_many :subscriptions, dependent: :restrict_with_error
+  
+  validates :name, presence: true, uniqueness: true
+  validates :type, inclusion: { in: %w[rest soap graphql] }
+  validates :interval, numericality: { greater_than: 0 }
+  
+  scope :active, -> { where(enabled: true) }
+  scope :due_for_sync, -> { where('last_sync_at < ?', interval.minutes.ago) }
+end
+
+# app/models/subscription.rb
+class Subscription < ApplicationRecord
+  include AASM
+  
+  belongs_to :integration
+  belongs_to :integration_filter
+  has_many :subscription_events, dependent: :destroy
+  
+  validates :cpf, presence: true, format: { with: /\A\d{11}\z/ }
+  validates :order_id, presence: true, uniqueness: true
+  
+  aasm column: :status do
+    state :pending, initial: true
+    state :filtered, :sent, :confirmed, :failed, :retry
+    
+    event :filter_out do
+      transitions from: :pending, to: :filtered
+    end
+    
+    event :send_to_institution do
+      transitions from: [:pending, :retry], to: :sent
+    end
+    
+    event :confirm_processing do
+      transitions from: :sent, to: :confirmed
+    end
+    
+    event :mark_failed do
+      transitions from: [:pending, :sent, :retry], to: :failed
+    end
+    
+    event :schedule_retry do
+      transitions from: [:sent, :failed], to: :retry
+    end
+  end
+end
+```
+
+#### 🔄 Jobs & Background Processing
+```ruby
+# app/jobs/register_sync_job.rb
+class RegisterSyncJob < ApplicationJob
+  queue_as :high_priority
+  retry_on StandardError, wait: :exponentially_longer, attempts: 3
+  
+  def perform(subscription_id)
+    subscription = Subscription.find(subscription_id)
+    RegisterSyncService.new(subscription).call
+  end
+end
+
+# app/jobs/register_cron_job.rb
+class RegisterCronJob < ApplicationJob
+  queue_as :default
+  
+  def perform
+    Integration.active.due_for_sync.find_each do |integration|
+      RegisterBatchService.new(integration).call
+    end
+  end
+end
+
+# app/jobs/checker_job.rb
+class CheckerJob < ApplicationJob
+  queue_as :low_priority
+  
+  def perform
+    subscriptions = Subscription.sent
+                              .where('checked_at < ? OR checked_at IS NULL', 1.hour.ago)
+    
+    subscriptions.find_each do |subscription|
+      CheckerService.new(subscription).call
+    end
+  end
+end
+```
+
+#### 🎯 Services & Business Logic
+```ruby
+# app/services/register_sync_service.rb
+class RegisterSyncService < ApplicationService
+  def initialize(subscription)
+    @subscription = subscription
+    @integration = subscription.integration
+  end
+  
+  def call
+    return filter_subscription unless passes_filters?
+    
+    payload = build_payload
+    response = send_to_api(payload)
+    
+    if response.success?
+      @subscription.send_to_institution!
+      schedule_status_check
+    else
+      handle_failure(response)
+    end
+    
+    log_event(response)
+  end
+  
+  private
+  
+  def passes_filters?
+    @subscription.integration_filter.apply(@subscription)
+  end
+  
+  def build_payload
+    PayloadBuilder.new(@subscription, @integration).build
+  end
+  
+  def send_to_api(payload)
+    ApiClient.new(@integration).post(payload)
+  end
+end
+
+# app/services/application_service.rb
+class ApplicationService
+  def self.call(*args, &block)
+    new(*args, &block).call
+  end
+end
+```
+
+#### 🔌 API Integration
+```ruby
+# app/lib/api_client.rb
+class ApiClient
+  def initialize(integration)
+    @integration = integration
+    @base_url = integration.base_url
+    @timeout = 30.seconds
+  end
+  
+  def post(payload)
+    connection.post do |req|
+      req.url endpoint_path
+      req.headers = headers
+      req.body = payload.to_json
+    end
+  rescue Faraday::TimeoutError => e
+    ApiResponse.new(success: false, error: "Timeout: #{e.message}")
+  end
+  
+  private
+  
+  def connection
+    @connection ||= Faraday.new(url: @base_url) do |f|
+      f.request :json
+      f.response :json
+      f.adapter Faraday.default_adapter
+      f.options.timeout = @timeout
+    end
+  end
+  
+  def headers
+    token = @integration.current_token
+    {
+      'Content-Type' => 'application/json',
+      'Authorization' => "Bearer #{token.decrypt_value}"
+    }
+  end
+end
+```
+
+### 📊 Database Considerations
+
+#### 🗂️ Indexing Strategy
+```sql
+-- db/migrate/add_performance_indexes.rb
+class AddPerformanceIndexes < ActiveRecord::Migration[8.0]
+  def change
+    add_index :subscriptions, [:status, :created_at]
+    add_index :subscriptions, [:integration_id, :status]
+    add_index :subscriptions, :cpf, using: :hash
+    add_index :subscription_events, [:subscription_id, :created_at]
+    add_index :integration_tokens, [:integration_id, :valid_until]
+    
+    # Partial indexes for common queries
+    add_index :subscriptions, :checked_at, 
+              where: "status = 'sent'", 
+              name: 'idx_subscriptions_sent_checked_at'
+  end
+end
+```
+
+#### 🔒 Security Enhancements
+```ruby
+# app/models/concerns/encryptable.rb
+module Encryptable
+  extend ActiveSupport::Concern
+  
+  included do
+    encrypts :cpf, deterministic: true
+    encrypts :value, deterministic: false  # for tokens
+  end
+end
+
+# config/application.rb
+config.force_ssl = true  # in production
+config.active_record.encryption.primary_key = ENV['AR_ENCRYPTION_PRIMARY_KEY']
+config.active_record.encryption.deterministic_key = ENV['AR_ENCRYPTION_DETERMINISTIC_KEY']
+```
+
+### 🚀 Deployment & Operations
+
+#### 📈 Monitoring & Metrics
+```ruby
+# app/controllers/health_controller.rb
+class HealthController < ApplicationController
+  def check
+    render json: {
+      status: 'healthy',
+      timestamp: Time.current,
+      database: database_healthy?,
+      redis: redis_healthy?,
+      queue: queue_healthy?
+    }
+  end
+  
+  private
+  
+  def database_healthy?
+    ActiveRecord::Base.connection.execute('SELECT 1')
+    true
+  rescue => e
+    false
+  end
+end
+
+# config/schedule.rb (usando whenever gem)
+every 5.minutes do
+  runner "CheckerJob.perform_later"
+end
+
+every 1.hour do
+  runner "RegisterCronJob.perform_later"
+end
+
+every 1.day, at: '2:00 am' do
+  runner "CleanupOldEventsJob.perform_later"
+end
+```
+
+#### 🔧 Configuration Management
+```yaml
+# config/database.yml
+production:
+  adapter: postgresql
+  host: <%= ENV['DB_HOST'] %>
+  database: <%= ENV['DB_NAME'] %>
+  username: <%= ENV['DB_USER'] %>
+  password: <%= ENV['DB_PASSWORD'] %>
+  pool: <%= ENV['DB_POOL'] || 25 %>
+  timeout: 5000
+  
+# config/environments/production.rb
+config.active_job.queue_adapter = :solid_queue
+config.cache_store = :solid_cache_store
+config.log_level = :info
+config.force_ssl = true
+```
+
+### 🧪 Testing Strategy
+
+#### 🔍 RSpec Configuration
+```ruby
+# spec/services/register_sync_service_spec.rb
+RSpec.describe RegisterSyncService do
+  describe '#call' do
+    let(:integration) { create(:integration) }
+    let(:subscription) { create(:subscription, :pending, integration: integration) }
+    let(:service) { described_class.new(subscription) }
+    
+    context 'when subscription passes filters' do
+      before { allow_any_instance_of(IntegrationFilter).to receive(:apply).and_return(true) }
+      
+      it 'sends subscription to institution' do
+        expect { service.call }.to change { subscription.reload.status }.to('sent')
+      end
+      
+      it 'creates a subscription event' do
+        expect { service.call }.to change { SubscriptionEvent.count }.by(1)
+      end
+    end
+  end
+end
+
+# spec/factories/subscriptions.rb
+FactoryBot.define do
+  factory :subscription do
+    association :integration
+    association :integration_filter
+    order_id { Faker::Number.unique.number(digits: 8) }
+    origin { 'quero_bolsa' }
+    cpf { Faker::IDNumber.valid }
+    payload { { name: Faker::Name.name, course: Faker::Educator.course_name } }
+    status { 'pending' }
+    
+    trait :sent do
+      status { 'sent' }
+      sent_at { 1.hour.ago }
+    end
+  end
+end
+```
+
 ## Outras docs
 
 - Página do produto: https://www.notion.so/quero
