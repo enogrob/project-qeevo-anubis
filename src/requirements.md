@@ -753,6 +753,75 @@ O **Checker** é o componente responsável por **monitorar o status de processam
 **🎯 Objetivo do Checker:**
 Garantir que todas as inscrições enviadas sejam devidamente processadas pelas instituições, fornecendo visibilidade completa do pipeline de integração e permitindo intervenções quando necessário.
 
+## 📋 Requisitos Funcionais
+
+### 🔄 Processamento de Inscrições
+- **RF001**: O sistema deve receber inscrições de alunos pagantes dos marketplaces (Quero Bolsa, EAD.com, Guia da Carreira, Mundo Vestibular)
+- **RF002**: O sistema deve validar dados obrigatórios antes do processamento (CPF, dados pessoais, curso)
+- **RF003**: O sistema deve aplicar filtros específicos por instituição antes do envio
+- **RF004**: O sistema deve construir payloads no formato esperado por cada API de instituição
+- **RF005**: O sistema deve gerenciar tokens de autenticação automaticamente
+
+### 📤 Integração com APIs
+- **RF006**: O sistema deve enviar dados para APIs de instituições de ensino superior
+- **RF007**: O sistema deve implementar retry automático para falhas temporárias (máximo 3 tentativas)
+- **RF008**: O sistema deve verificar status de processamento nas instituições periodicamente
+- **RF009**: O sistema deve processar respostas em diferentes formatos (JSON, XML, etc.)
+
+### 📊 Monitoramento e Auditoria
+- **RF010**: O sistema deve registrar logs estruturados de todas as operações
+- **RF011**: O sistema deve manter histórico completo de tentativas e respostas
+- **RF012**: O sistema deve gerar métricas de performance por instituição
+- **RF013**: O sistema deve alertar sobre falhas críticas e integrações inativas
+
+## 🛡️ Requisitos Não-Funcionais
+
+### 🚀 Performance
+- **RNF001**: O sistema deve processar até 10.000 inscrições por hora
+- **RNF002**: Tempo de resposta máximo de 5 segundos para processamento individual
+- **RNF003**: Processamento em lote deve completar em até 30 minutos
+- **RNF004**: APIs de instituições devem ter timeout de 30 segundos
+
+### 🔒 Segurança
+- **RNF005**: CPFs devem ser armazenados com hash SHA-256
+- **RNF006**: Tokens de API devem ser criptografados em repouso
+- **RNF007**: Logs não devem expor dados sensíveis dos alunos
+- **RNF008**: Comunicação com APIs deve usar HTTPS/TLS 1.2+
+
+### 📈 Escalabilidade
+- **RNF009**: Sistema deve suportar crescimento de 50% ao ano no volume
+- **RNF010**: Banco de dados deve suportar particionamento por data
+- **RNF011**: Sistema deve funcionar em arquitetura de microserviços
+- **RNF012**: Deve permitir adição de novas instituições sem impacto
+
+### 🔧 Confiabilidade
+- **RNF013**: Disponibilidade mínima de 99.5% (excluindo manutenções)
+- **RNF014**: Backup automático diário dos dados críticos
+- **RNF015**: Recuperação em caso de falha em até 1 hora
+- **RNF016**: Retenção de logs por no mínimo 6 meses
+
+## 🎯 Critérios de Aceitação
+
+### ✅ Cenários de Sucesso
+1. **Processamento Normal**: Inscrição válida é enviada e confirmada pela instituição
+2. **Aplicação de Filtros**: Inscrição é filtrada corretamente baseada nas regras
+3. **Retry Automático**: Falha temporária é recuperada automaticamente
+4. **Monitoramento**: Dashboards mostram métricas em tempo real
+
+### ❌ Cenários de Erro
+1. **Dados Inválidos**: Sistema rejeita e loga inscrições com dados inconsistentes
+2. **API Indisponível**: Sistema agenda retry e notifica equipe de operações
+3. **Token Expirado**: Sistema renova automaticamente ou alerta para renovação manual
+4. **Limite de Tentativas**: Após 3 falhas, marca para intervenção manual
+
+## 🚫 Exclusões do Escopo
+
+- **Não incluído**: Envio de leads do Quero Captação
+- **Não incluído**: Alunos pagantes de outros produtos Qeevo
+- **Não incluído**: Interface para reenvio manual de falhas
+- **Não incluído**: Agendamento customizado de envios
+- **Não incluído**: Relatórios financeiros ou de cobrança
+
 ## Outras docs
 
 - Página do produto: https://www.notion.so/quero
