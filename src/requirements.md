@@ -151,14 +151,89 @@ erDiagram
 
 #### 🔄 Relacionamentos e Fluxo de Dados
 
-**Hierarquia de Dependências:**
+<details>
+<summary>🏗️ Visualizar Hierarquia de Dependências</summary>
+
+```mermaid
+%%{init: {
+  'theme':'base',
+  'themeVariables': {
+    'primaryColor':'#E8F4FD',
+    'primaryBorderColor':'#4A90E2',
+    'primaryTextColor':'#2C3E50',
+    'secondaryColor':'#F0F8E8',
+    'tertiaryColor':'#FDF2E8',
+    'quaternaryColor':'#F8E8F8',
+    'lineColor':'#5D6D7E',
+    'fontFamily':'Inter,Segoe UI,Arial'
+  }
+}}%%
+graph TD
+    subgraph "🏛️ Configuração de Instituições"
+        INT["🔌 Integration<br/>📋 Instituição de Ensino<br/>(Kroton, Estácio, etc.)"]
+        
+        subgraph "🎯 Regras de Negócio"
+            FILTER1["🧰 IntegrationFilter<br/>📚 Filtro de Cursos"]
+            FILTER2["🌍 IntegrationFilter<br/>📍 Filtro Regional"]
+            FILTER3["👥 IntegrationFilter<br/>🎯 Filtro Demográfico"]
+        end
+        
+        subgraph "🔐 Autenticação"
+            TOKEN1["🎫 IntegrationToken<br/>🔑 Access Token"]
+            TOKEN2["🗝️ IntegrationToken<br/>🔐 API Key"]
+            TOKEN3["🎟️ IntegrationToken<br/>⏰ Refresh Token"]
+        end
+    end
+    
+    subgraph "📦 Processamento de Inscrições"
+        SUB1["📝 Subscription<br/>👤 Aluno Quero Bolsa"]
+        SUB2["📝 Subscription<br/>👤 Aluno EAD.com"]
+        SUB3["📝 Subscription<br/>👤 Aluno Guia Carreira"]
+        
+        subgraph "📊 Auditoria e Logs"
+            EVENT1["📋 SubscriptionEvent<br/>✅ Envio Sucesso"]
+            EVENT2["📋 SubscriptionEvent<br/>🔄 Tentativa Retry"]
+            EVENT3["📋 SubscriptionEvent<br/>❌ Erro Processamento"]
+            EVENT4["📋 SubscriptionEvent<br/>🔍 Verificação Status"]
+        end
+    end
+    
+    %% Relacionamentos principais
+    INT -->|"has_many<br/>🎯 define regras"| FILTER1
+    INT -->|"has_many<br/>🎯 define regras"| FILTER2
+    INT -->|"has_many<br/>🎯 define regras"| FILTER3
+    
+    INT -->|"has_many<br/>🔐 autentica"| TOKEN1
+    INT -->|"has_many<br/>🔐 autentica"| TOKEN2
+    INT -->|"has_many<br/>🔐 autentica"| TOKEN3
+    
+    INT -->|"has_many<br/>📦 processa"| SUB1
+    INT -->|"has_many<br/>📦 processa"| SUB2
+    INT -->|"has_many<br/>📦 processa"| SUB3
+    
+    FILTER1 -->|"has_many<br/>✅ aplica filtro"| SUB1
+    FILTER2 -->|"has_many<br/>✅ aplica filtro"| SUB2
+    FILTER3 -->|"has_many<br/>✅ aplica filtro"| SUB3
+    
+    SUB1 -->|"has_many<br/>📝 registra eventos"| EVENT1
+    SUB1 -->|"has_many<br/>📝 registra eventos"| EVENT2
+    SUB2 -->|"has_many<br/>📝 registra eventos"| EVENT3
+    SUB3 -->|"has_many<br/>📝 registra eventos"| EVENT4
+    
+    classDef integration fill:#E8F4FD,stroke:#4A90E2,color:#2C3E50
+    classDef filter fill:#F0F8E8,stroke:#7CB342,color:#2C3E50
+    classDef token fill:#FDF2E8,stroke:#FF9800,color:#2C3E50
+    classDef subscription fill:#F8E8F8,stroke:#9C27B0,color:#2C3E50
+    classDef event fill:#FCE4EC,stroke:#E91E63,color:#2C3E50
+    
+    class INT integration
+    class FILTER1,FILTER2,FILTER3 filter
+    class TOKEN1,TOKEN2,TOKEN3 token
+    class SUB1,SUB2,SUB3 subscription
+    class EVENT1,EVENT2,EVENT3,EVENT4 event
 ```
-Integration (1) ←── IntegrationFilter (N)
-     ↓                    ↓
-Integration (1) ←── Subscription (N) ──→ IntegrationFilter (1)
-     ↓                    ↓
-IntegrationToken (N)  SubscriptionEvent (N)
-```
+
+</details>
 
 **Fluxo de Processamento:**
 1. **Integration** define a instituição de destino
