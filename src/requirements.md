@@ -104,10 +104,6 @@ erDiagram
 
 </details>
 
-### Comandos usados para Gerar os Models
-
-```bash
-```
 
 ### 📋 Informações Relevantes do Modelo de Dados
 
@@ -205,17 +201,6 @@ IntegrationToken (N)  SubscriptionEvent (N)
 - Métricas por status de subscription
 - Alertas para falhas em integrações específicas
 - Dashboard de performance por instituição
-
-### 📝 Comandos para Gerar os Models
-
-```bash
-rails g model Integration name:string type:string key:string interval:integer --no-test-framework
-rails g model IntegrationFilter integration:references filter:json type:string enabled:boolean --no-test-framework
-rails g model Subscription integration:references integration_filter:references order_id:integer origin:string cpf:string payload:json status:string sent_at:timestamp checked_at:timestamp scheduled_to:timestamp --no-test-framework
-rails g model IntegrationToken integration:references key:string value:string valid_until:timestamp --no-test-framework
-rails g model SubscriptionEvent subscription:references status:string operation_name:string error_message:string request:json response:json model:string --no-test-framework
-```
-```
 
 ## Fluxos do Projeto
 
