@@ -1,1 +1,26 @@
-{}
+{
+  "markdown-pdf.executablePath": "/usr/bin/google-chrome-stable",
+  "markdown-pdf.styles": ["src/anubis/docs/pdf-export-fast.css"],
+  "markdown-pdf.highlightStyle": "github.css",
+  "markdown-pdf.breaks": false,
+  "markdown-pdf.emoji": true,
+  "markdown-pdf.mermaid": {
+    "theme": "default",
+    "scale": 1.0
+  },
+  "markdown-pdf.displayHeaderFooter": true,
+  "markdown-pdf.headerTemplate": "<div style=\"font-size: 9px; margin-left: 1cm;\"> <span class='title'></span></div> <div style=\"font-size: 9px; margin-left: auto; margin-right: 1cm; \"> <span class='date'></span></div>",
+  "markdown-pdf.footerTemplate": "<div style=\"font-size: 9px; margin: 0 auto;\"> <span class='pageNumber'></span> / <span class='totalPages'></span></div>",
+  "markdown-pdf.format": "A4",
+  "markdown-pdf.border.top": "1.5cm",
+  "markdown-pdf.border.bottom": "1cm",
+  "markdown-pdf.border.right": "1cm",
+  "markdown-pdf.border.left": "1cm",
+  "markdown-pdf.quality": 100,
+  "markdown-pdf.width": "210mm",
+  "markdown-pdf.height": "297mm",
+  "markdown-pdf.orientation": "portrait",
+  "markdown-pdf.timeout": 20000,
+  "markdown-pdf.outputDirectory": "src/anubis/docs/",
+  "markdown-pdf.outputDirectoryRelativePathFile": true
+}

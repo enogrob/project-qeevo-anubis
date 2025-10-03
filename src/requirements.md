@@ -1,4 +1,7 @@
-# Anubis
+<div style="position: relative; display: inline-flex; align-items: center;">
+  <img src="The_judgement_of_the_dead_in_the_presence_of_Osiris.jpg" alt="Anubis" width="32" height="32" style="opacity: 0.15; filter: grayscale(30%) brightness(1.2); margin-right: 8px;"/>
+  <h1 style="margin: 0; display: inline;">Anubis Projeto - Requisitos</h1>
+</div>
 
 ## Descrição
 
@@ -383,9 +386,11 @@ O Anubis atua como um **orquestrador central** que recebe dados de alunos pagant
   }
 }}%%
 flowchart LR
-    subgraph "📊 Data Sources"
-        ORDER["📦 Order Service"]
-        STUDENT["👤 Student Data"]
+    subgraph "🌐 Marketplace Events"
+        QB_EVENT["🎓 Quero Bolsa Events"]
+        EAD_EVENT["📚 EAD.com Events"]
+        GC_EVENT["�️ Guia Carreira Events"]
+        MV_EVENT["🎯 Mundo Vestibular Events"]
     end
     
     subgraph "🔄 Anubis Core"
@@ -406,8 +411,10 @@ flowchart LR
         EVENT_LOG["📝 Event Logger"]
     end
     
-    ORDER --> REGISTER
-    STUDENT --> REGISTER
+    QB_EVENT --> REGISTER
+    EAD_EVENT --> REGISTER
+    GC_EVENT --> REGISTER
+    MV_EVENT --> REGISTER
     
     REGISTER --> SCHEDULER
     SCHEDULER --> CHECKER
@@ -426,7 +433,7 @@ flowchart LR
     classDef integration fill:#FDF2E8,stroke:#FF9800,color:#2C3E50
     classDef output fill:#F8E8F8,stroke:#9C27B0,color:#2C3E50
     
-    class ORDER,STUDENT source
+    class QB_EVENT,EAD_EVENT,GC_EVENT,MV_EVENT source
     class REGISTER,SCHEDULER,CHECKER,RETRY core
     class FILTER,TOKEN,PAYLOAD integration
     class API_CLIENT,EVENT_LOG output
@@ -438,7 +445,7 @@ flowchart LR
 
 Esta arquitetura modular divide o Anubis em **componentes especializados** que trabalham em conjunto:
 
-- **Fontes de Dados**: Order Service e Student Data fornecem as informações base dos alunos
+- **Eventos de Marketplaces**: Quero Bolsa, EAD.com, Guia da Carreira e Mundo Vestibular enviam eventos de inscrições de alunos pagantes
 - **Núcleo de Processamento**: 
   - **Register Sync**: Processa inscrições em tempo real
   - **Scheduler**: Agenda tarefas e verificações periódicas
