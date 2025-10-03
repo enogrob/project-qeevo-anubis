@@ -354,11 +354,11 @@ flowchart TD
     classDef start fill:#E8F4FD,stroke:#4A90E2,color:#2C3E50
     classDef process fill:#F0F8E8,stroke:#7CB342,color:#2C3E50
     classDef decision fill:#FDF2E8,stroke:#FF9800,color:#2C3E50
-    classDef end fill:#F8E8F8,stroke:#9C27B0,color:#2C3E50
+    classDef endNode fill:#F8E8F8,stroke:#9C27B0,color:#2C3E50
     
     class START start
     class RECEIVE,VALIDATE,EXTRACT,FIND_INT,APPLY_FILTER,CHECK_RULES,BUILD_PAYLOAD,ADD_TOKEN,VALIDATE_PAYLOAD,SEND_API,LOG_EVENT,SCHEDULE_CHECK process
-    class SUCCESS,ERROR,RETRY end
+    class SUCCESS,ERROR,RETRY endNode
 ```
 
 **🔄 Explicação do Register Sync:**
@@ -464,13 +464,13 @@ flowchart TD
     classDef discovery fill:#F0F8E8,stroke:#7CB342,color:#2C3E50
     classDef processing fill:#FDF2E8,stroke:#FF9800,color:#2C3E50
     classDef delivery fill:#F8E8F8,stroke:#9C27B0,color:#2C3E50
-    classDef end fill:#FCE4EC,stroke:#E91E63,color:#2C3E50
+    classDef endNode fill:#FCE4EC,stroke:#E91E63,color:#2C3E50
     
     class CRON_START cron
     class FETCH_INTEGRATIONS,CHECK_INTERVAL,FILTER_DUE discovery
     class FETCH_ORDERS,GROUP_BY_INT,PREPARE_BATCH,PROCESS_BATCH,APPLY_FILTERS,BUILD_PAYLOADS processing
     class SEND_BATCH,LOG_RESULTS,UPDATE_STATUS delivery
-    class COMPLETE,ERROR_HANDLER,SCHEDULE_RETRY end
+    class COMPLETE,ERROR_HANDLER,SCHEDULE_RETRY endNode
 ```
 
 **⏰ Explicação do Register Cron:**
@@ -597,14 +597,14 @@ flowchart TD
     classDef api fill:#FDF2E8,stroke:#FF9800,color:#2C3E50
     classDef processing fill:#F8E8F8,stroke:#9C27B0,color:#2C3E50
     classDef decision fill:#FCE4EC,stroke:#E91E63,color:#2C3E50
-    classDef end fill:#E1F5FE,stroke:#00BCD4,color:#2C3E50
+    classDef endNode fill:#E1F5FE,stroke:#00BCD4,color:#2C3E50
     
     class CHECKER_START start
     class FETCH_PENDING,CHECK_SCHEDULE,FILTER_READY monitoring
     class CALL_STATUS_API,PARSE_RESPONSE,EXTRACT_STATUS api
     class COMPARE_STATUS,UPDATE_SUBSCRIPTION,DETERMINE_ACTION,LOG_CHECK,UPDATE_TIMESTAMP,STORE_RESPONSE processing
     class SUCCESS,PENDING,FAILED,RETRY_NEEDED decision
-    class SCHEDULE_NEXT,TRIGGER_RETRY,COMPLETE end
+    class SCHEDULE_NEXT,TRIGGER_RETRY,COMPLETE endNode
 ```
 
 **🔍 Explicação do Fluxo Checker:**
