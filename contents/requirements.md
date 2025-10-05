@@ -1,7 +1,4 @@
-<div style="position: relative; display: inline-flex; align-items: center;">
-  <img src="The_judgement_of_the_dead_in_the_presence_of_Osiris.jpg" alt="Anubis" width="32" height="32" style="opacity: 0.15; filter: grayscale(30%) brightness(1.2); margin-right: 8px;"/>
-  <h1 style="margin: 0; display: inline;">Anubis Projeto - Requisitos</h1>
-</div>
+# <img src="anubis.png" alt="Anubis" width="32" height="32" style="vertical-align: middle; display: inline-block; margin-right: 8px;"/> Anubis Projeto - Requisitos
 
 ## Descrição
 
@@ -12,8 +9,7 @@ O escopo do serviço não inclui o envio de leads do Quero Captação, alunos pa
 
 ## Modelo de Dados (ER Diagram)
 
-<details>
-<summary>📊 Visualizar Diagrama Entidade-Relacionamento</summary>
+📊 Diagrama Entidade-Relacionamento
 
 ```mermaid
 %%{init: {
@@ -105,9 +101,6 @@ erDiagram
   }
 ```
 
-</details>
-
-
 ### 📋 Informações Relevantes do Modelo de Dados
 
 #### 🏛️ Entidades Principais e Seus Propósitos
@@ -154,8 +147,7 @@ erDiagram
 
 #### 🔄 Relacionamentos e Fluxo de Dados
 
-<details>
-<summary>🏗️ Visualizar Hierarquia de Dependências</summary>
+🏗️ Hierarquia de Dependências
 
 ```mermaid
 %%{init: {
@@ -236,8 +228,6 @@ graph TD
     class EVENT1,EVENT2,EVENT3,EVENT4 event
 ```
 
-</details>
-
 **Fluxo de Processamento:**
 1. **Integration** define a instituição de destino
 2. **IntegrationFilter** determina quais alunos são elegíveis
@@ -284,8 +274,7 @@ graph TD
 
 ### 🏗️ Visão Geral do Sistema (Overview)
 
-<details>
-<summary>🏗️ Visualizar Diagrama de Visão Geral do Sistema</summary>
+🏗️ Diagrama de Visão Geral do Sistema
 
 ```mermaid
 %%{init: {
@@ -354,8 +343,6 @@ flowchart TD
     class DB,KAFKA storage
 ```
 
-</details>
-
 **📋 Explicação da Visão Geral:**
 
 O Anubis atua como um **orquestrador central** que recebe dados de alunos pagantes de múltiplos marketplaces educacionais e os distribui para as APIs das instituições de ensino superior. O fluxo é unidirecional e assíncrono:
@@ -368,8 +355,7 @@ O Anubis atua como um **orquestrador central** que recebe dados de alunos pagant
 
 ### 🔧 Arquitetura de Serviços
 
-<details>
-<summary>🔧 Visualizar Diagrama da Arquitetura de Serviços</summary>
+🔧 Diagrama da Arquitetura de Serviços
 
 ```mermaid
 %%{init: {
@@ -439,8 +425,6 @@ flowchart LR
     class API_CLIENT,EVENT_LOG output
 ```
 
-</details>
-
 **⚙️ Explicação da Arquitetura de Serviços:**
 
 Esta arquitetura modular divide o Anubis em **componentes especializados** que trabalham em conjunto:
@@ -461,8 +445,7 @@ Esta arquitetura modular divide o Anubis em **componentes especializados** que t
 
 #### 📋 Fluxo Register Sync
 
-<details>
-<summary>📋 Visualizar Diagrama do Fluxo Register Sync</summary>
+📋 Diagrama do Fluxo Register Sync
 
 ```mermaid
 %%{init: {
@@ -544,8 +527,6 @@ flowchart TD
     class SUCCESS,ERROR,RETRY endNode
 ```
 
-</details>
-
 **🔄 Explicação do Register Sync:**
 
 O **Register Sync** é o processo principal de sincronização em tempo real que processa cada inscrição individualmente:
@@ -577,8 +558,7 @@ O **Register Sync** é o processo principal de sincronização em tempo real que
 
 #### ⏰ Fluxo Register Cron
 
-<details>
-<summary>⏰ Visualizar Diagrama do Fluxo Register Cron</summary>
+⏰ Diagrama do Fluxo Register Cron
 
 ```mermaid
 %%{init: {
@@ -661,8 +641,6 @@ flowchart TD
     class COMPLETE,ERROR_HANDLER,SCHEDULE_RETRY endNode
 ```
 
-</details>
-
 **⏰ Explicação do Register Cron:**
 
 O **Register Cron** é o processo batch que executa periodicamente para processar volumes maiores de dados:
@@ -699,8 +677,7 @@ O **Register Cron** é o processo batch que executa periodicamente para processa
 
 #### 🔍 Fluxo Checker
 
-<details>
-<summary>🔍 Visualizar Diagrama do Fluxo Checker</summary>
+🔍 Diagrama do Fluxo Checker
 
 ```mermaid
 %%{init: {
@@ -799,8 +776,6 @@ flowchart TD
     class SUCCESS,PENDING,FAILED,RETRY_NEEDED decision
     class SCHEDULE_NEXT,TRIGGER_RETRY,COMPLETE endNode
 ```
-
-</details>
 
 **🔍 Explicação do Fluxo Checker:**
 
