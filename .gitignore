@@ -1,3 +1,4 @@
 src/
 #.github/
 Icon*
+node_modules/

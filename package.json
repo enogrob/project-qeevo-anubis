@@ -1,0 +1,8 @@
+{
+  "name": "mermaid-pdf-generator",
+  "version": "1.0.0",
+  "description": "PDF generator with proper Mermaid support",
+  "dependencies": {
+    "puppeteer": "^21.0.0"
+  }
+}
