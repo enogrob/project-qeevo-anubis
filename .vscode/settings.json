@@ -22,5 +22,14 @@
   "markdown-pdf.orientation": "portrait",
   "markdown-pdf.timeout": 20000,
   "markdown-pdf.outputDirectory": "src/anubis/docs/",
-  "markdown-pdf.outputDirectoryRelativePathFile": true
+  "markdown-pdf.outputDirectoryRelativePathFile": true,
+  "files.encoding": "utf8",
+  "extensions.ignoreRecommendations": true,
+  "markdown.preview.breaks": true,
+  "markdown.preview.linkify": false,
+  "markdown.preview.typographer": false,
+  "workbench.editorAssociations": {
+    "*.md": "vscode.markdown.preview.editor"
+  },
+  "markdown.extension.preview.autoShowPreviewToSide": false
 }
