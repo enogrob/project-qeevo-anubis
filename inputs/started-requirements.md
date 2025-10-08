@@ -128,7 +128,8 @@ erDiagram
 
 
 ## Arquiterura do Projeto
-![](https://private-user-images.githubusercontent.com/81271031/498536377-7f789bb7-243d-4cda-b7f6-7f2f10af4c44.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTk5MjYzOTIsIm5iZiI6MTc1OTkyNjA5MiwicGF0aCI6Ii84MTI3MTAzMS80OTg1MzYzNzctN2Y3ODliYjctMjQzZC00Y2RhLWI3ZjYtN2YyZjEwYWY0YzQ0LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTEwMDglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUxMDA4VDEyMjEzMlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTFlOTIzYjkxYjk3YTU5NjgwYzVhOTJhNjI5M2Q1Y2MwODQwMjE5YWEzYTk5ZmM1ZThkM2JlYTEwOGJlMzE2NGImWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.aHuBN8BsC5ecH4N7fJ7K9vC-SQGnOuCyaJ804yYTwAI)
+
+![](assets/anubis-architecture.png)
 
 **📋 Explicação da Arquitetura**
 
@@ -164,7 +165,7 @@ graph TD
     end
     
     subgraph "🛠️ Infrastructure"
-        I[📊 Redis Cache]
+        I[📊 Cache]
         J[📋 Rails Logger]
         K[⚠️ Error Tracking]
     end
