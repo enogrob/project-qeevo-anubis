@@ -555,6 +555,10 @@ Esta seção contém links para documentações técnicas detalhadas e guias de 
 - **[📊 Kafka Implementation Guide](../docs/kafka-implementation-guide.md)** - Guia completo de implementação Kafka
 - **[🌐 Quero Deals](../docs/quero-deals.md)** - Documentação do sistema Quero Deals
 
+### 💻 **Base do Código Existente**
+
+- **[🔗 Projeto Anubis - GitHub](https://github.com/quero-edu/anubis)** - Repositório oficial do microserviço Anubis com estrutura Rails completa
+
 ### 🏢 **Integrações com Instituições**
 
 - **[🎓 Estácio Lead Integration](../docs/estacio-lead-integration.md)** - Guia de integração com API da Estácio
