@@ -7,14 +7,148 @@ O Anubis é um microserviço responsável pela orquestração do envio de dados 
 O escopo do serviço não inclui o envio de leads do Quero Captação, alunos pagantes de outros produtos da Qeevo, agendamento de envios ou interface para reenvio manual de falhas. O foco está na integração eficiente e segura dos dados de alunos pagantes entre os sistemas internos e as APIs das instituições parceiras.
 
 **Tecnologias predominantes:**
-- Ruby 3.4.5
-- Rails 8.0.3
-- Postgres 17
-- Kafka
-- Rspec
-- Simplecov
-- AASM
-- Tidewave
+
+```mermaid
+%%{init: {
+  'theme':'base',
+  'themeVariables': {
+    'primaryColor':'#E8F4FD',
+    'primaryBorderColor':'#4A90E2',
+    'primaryTextColor':'#2C3E50',
+    'secondaryColor':'#F0F8E8',
+    'tertiaryColor':'#FDF2E8',
+    'quaternaryColor':'#F8E8F8',
+    'lineColor':'#5D6D7E',
+    'fontFamily':'Inter,Segoe UI,Arial'
+  }
+}}%%
+graph TB
+    subgraph "💎 Core Technologies"
+        RUBY[💎 Ruby 3.4.5<br/>Language Runtime]
+        RAILS[🚂 Rails 8.0.3<br/>Web Framework]
+        PG[🐘 PostgreSQL 17<br/>Database]
+    end
+    
+    subgraph "🔌 API & Integration"
+        GQL[🎯 GraphQL Client 0.18.0<br/>Stock Services API]
+        FARADAY[🌐 Faraday 2.7.0<br/>HTTP Client]
+        RETRY[🔄 Faraday Retry 2.0.0<br/>Resilience]
+        OJ[⚡ OJ 3.15.0<br/>Fast JSON Parser]
+    end
+    
+    subgraph "📨 Event Streaming"
+        KAFKA[📋 Kafka<br/>Event Streaming]
+        RDKAFKA[🚀 RDKafka 0.23.1<br/>Kafka Client]
+        RACECAR[🏎️ Racecar 2.12<br/>Kafka Consumer]
+    end
+    
+    subgraph "🧪 Testing & Quality"
+        RSPEC[🧪 RSpec Rails 8.0<br/>Testing Framework]
+        SIMPLECOV[📊 SimpleCov 0.22.0<br/>Code Coverage]
+        FACTORY[🏭 FactoryBot Rails 6.5<br/>Test Data]
+        FAKER[🎭 Faker 3.5<br/>Fake Data Generator]
+        SHOULDA[✅ Shoulda Matchers 6.5<br/>Test Matchers]
+        BRAKEMAN[🛡️ Brakeman<br/>Security Scanner]
+        RUBOCOP[🎨 RuboCop Omakase<br/>Code Style]
+    end
+    
+    subgraph "⚙️ State & Workflow"
+        AASM[🎯 AASM 5.5<br/>State Machine]
+        SOLID_CACHE[📦 Solid Cache<br/>Rails Cache]
+        SOLID_QUEUE[📬 Solid Queue<br/>Background Jobs]
+        SOLID_CABLE[📡 Solid Cable<br/>WebSockets]
+    end
+    
+    subgraph "🛠️ Development Tools"
+        TIDEWAVE[🌊 Tidewave 0.3.1<br/>Development Helpers]
+        DEBUG[🐛 Debug<br/>Debugging]
+        WEB_CONSOLE[💻 Web Console<br/>Rails Console]
+        KAMAL[🚢 Kamal<br/>Docker Deployment]
+        THRUSTER[🚀 Thruster<br/>Asset Optimization]
+    end
+    
+    subgraph "🎨 Frontend & Assets"
+        PROPSHAFT[📦 Propshaft<br/>Asset Pipeline]
+        IMPORTMAP[🗺️ Importmap Rails<br/>ES6 Modules]
+        TURBO[⚡ Turbo Rails<br/>SPA-like Navigation]
+        STIMULUS[⚡ Stimulus Rails<br/>JavaScript Framework]
+        JBUILDER[🏗️ JBuilder<br/>JSON Templates]
+    end
+    
+    subgraph "🔧 Infrastructure"
+        PUMA[🐾 Puma 5.0+<br/>Web Server]
+        BOOTSNAP[🏃 Bootsnap<br/>Boot Optimization]
+    end
+    
+    %% Core Dependencies
+    RUBY --> RAILS
+    RAILS --> PG
+    RAILS --> PUMA
+    
+    %% API Integration Flow
+    RAILS --> GQL
+    GQL --> FARADAY
+    FARADAY --> RETRY
+    FARADAY --> OJ
+    
+    %% Event Streaming Flow
+    RAILS --> RDKAFKA
+    RDKAFKA --> KAFKA
+    RDKAFKA --> RACECAR
+    
+    %% Testing Dependencies
+    RAILS --> RSPEC
+    RSPEC --> FACTORY
+    RSPEC --> FAKER
+    RSPEC --> SHOULDA
+    RSPEC --> SIMPLECOV
+    
+    %% State Management
+    RAILS --> AASM
+    RAILS --> SOLID_CACHE
+    RAILS --> SOLID_QUEUE
+    RAILS --> SOLID_CABLE
+    
+    %% Frontend Dependencies
+    RAILS --> PROPSHAFT
+    RAILS --> IMPORTMAP
+    RAILS --> TURBO
+    RAILS --> STIMULUS
+    RAILS --> JBUILDER
+    
+    %% Development Tools
+    RAILS --> TIDEWAVE
+    RAILS --> DEBUG
+    RAILS --> WEB_CONSOLE
+    RAILS --> BOOTSNAP
+    
+    %% Quality Tools
+    RAILS --> BRAKEMAN
+    RAILS --> RUBOCOP
+    
+    %% Deployment
+    RAILS --> KAMAL
+    PUMA --> THRUSTER
+    
+    %% Styling
+    classDef coreStyle fill:#E8F4FD,stroke:#4A90E2,stroke-width:3px
+    classDef apiStyle fill:#F0F8E8,stroke:#67C52A,stroke-width:2px
+    classDef eventStyle fill:#FDF2E8,stroke:#F39C12,stroke-width:2px
+    classDef testStyle fill:#F8E8F8,stroke:#9B59B6,stroke-width:2px
+    classDef stateStyle fill:#E8F6F3,stroke:#1ABC9C,stroke-width:2px
+    classDef devStyle fill:#FEF9E7,stroke:#F1C40F,stroke-width:2px
+    classDef frontendStyle fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
+    classDef infraStyle fill:#EBF5FB,stroke:#3498DB,stroke-width:2px
+    
+    class RUBY,RAILS,PG coreStyle
+    class GQL,FARADAY,RETRY,OJ apiStyle
+    class KAFKA,RDKAFKA,RACECAR eventStyle
+    class RSPEC,SIMPLECOV,FACTORY,FAKER,SHOULDA,BRAKEMAN,RUBOCOP testStyle
+    class AASM,SOLID_CACHE,SOLID_QUEUE,SOLID_CABLE stateStyle
+    class TIDEWAVE,DEBUG,WEB_CONSOLE,KAMAL,THRUSTER devStyle
+    class PROPSHAFT,IMPORTMAP,TURBO,STIMULUS,JBUILDER frontendStyle
+    class PUMA,BOOTSNAP infraStyle
+```
 
 ### Input Sources
 - **Base Requirements**: `#file:inputs/started-requirements.md` (Contains description, ER diagrams, and sketched architecture). This is the document to be used as starting point.
