@@ -58,7 +58,6 @@ graph TB
     
     subgraph "🛠️ Development Tools"
         TIDEWAVE[🌊 Tidewave 0.3.1<br/>Development Helpers]
-        KAMAL[🚢 Kamal<br/>Docker Deployment]
     end
     
     %% Core Dependencies
@@ -93,9 +92,6 @@ graph TB
     RAILS --> BRAKEMAN
     RAILS --> RUBOCOP
     
-    %% Deployment
-    RAILS --> KAMAL
-    
     %% Styling
     classDef coreStyle fill:#E8F4FD,stroke:#4A90E2,stroke-width:3px
     classDef apiStyle fill:#F0F8E8,stroke:#67C52A,stroke-width:2px
@@ -111,7 +107,7 @@ graph TB
     class KAFKA,RDKAFKA,RACECAR eventStyle
     class RSPEC,SIMPLECOV,FACTORY,FAKER,SHOULDA,BRAKEMAN,RUBOCOP testStyle
     class AASM stateStyle
-    class TIDEWAVE,KAMAL devStyle
+    class TIDEWAVE devStyle
 ```
 
 ### Entradas de Informação

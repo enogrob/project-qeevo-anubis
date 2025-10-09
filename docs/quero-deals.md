@@ -1415,33 +1415,33 @@ config.heartbeat_interval_ms = 10000   # Keep-alive
   }
 }}%%
 graph TB
-    subgraph "📊 Real-time Monitoring"
-        A[📈 Grafana Dashboard]
-        A --> A1[🔥 Producer Metrics]
-        A --> A2[📥 Consumer Lag]
-        A --> A3[🌊 Topic Health]
-        A --> A4[🚨 Error Rates]
+    subgraph "Real-time Monitoring"
+        A[Grafana Dashboard]
+        A --> A1[Producer Metrics]
+        A --> A2[Consumer Lag]
+        A --> A3[Topic Health]
+        A --> A4[Error Rates]
     end
     
-    subgraph "🔔 Alerting System"
-        B[🚨 Alert Manager]
-        B --> B1[📧 Email Alerts]
-        B --> B2[📱 Slack Notifications]
-        B --> B3[📞 PagerDuty (Critical)]
+    subgraph "Alerting System"
+        B[Alert Manager]
+        B --> B1[Email Alerts]
+        B --> B2[Slack Notifications]
+        B --> B3[PagerDuty Critical]
     end
     
-    subgraph "📋 Operational Tools"
-        C[🛠️ Kafka Manager]
-        C --> C1[👀 Topic Inspection]
-        C --> C2[🔧 Consumer Groups]
-        C --> C3[📊 Broker Status]
-        C --> C4[⚙️ Configuration]
+    subgraph "Operational Tools"
+        C[Kafka Manager]
+        C --> C1[Topic Inspection]
+        C --> C2[Consumer Groups]
+        C --> C3[Broker Status]
+        C --> C4[Configuration]
     end
     
     A1 -.->|threshold breach| B
-    A2 -.->|lag > 1000| B
+    A2 -.->|lag gt 1000| B
     A3 -.->|partition down| B
-    A4 -.->|error > 1%| B
+    A4 -.->|error gt 1pct| B
     
     classDef monitoring fill:#E8F4FD,stroke:#4A90E2,stroke-width:2px
     classDef alerting fill:#FDF2E8,stroke:#F39C12,stroke-width:2px
