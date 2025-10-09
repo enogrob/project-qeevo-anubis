@@ -552,7 +552,6 @@ Esta seção contém links para documentações técnicas detalhadas e guias de 
 
 ### 🔧 **Documentação Técnica**
 
-- **[📋 Requirements](../docs/requirements.md)** - Requisitos detalhados do projeto
 - **[📊 Kafka Implementation Guide](../docs/kafka-implementation-guide.md)** - Guia completo de implementação Kafka
 - **[🌐 Quero Deals](../docs/quero-deals.md)** - Documentação do sistema Quero Deals
 
