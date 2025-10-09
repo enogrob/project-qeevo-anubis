@@ -127,7 +127,7 @@ erDiagram
 - Tokens não devem ser armazenados com criptografia
 
 
-## Arquiterura do Projeto
+## Arquitetura do Projeto
 
 ![](assets/anubis-architecture.png)
 
@@ -206,6 +206,9 @@ A arquitetura dos serviços segue o padrão de **3 camadas (3-Tier Architecture)
 
 **Fluxo de Dados:**
 
+<details>
+<summary>📊 Sequence Diagram - StockServicesClient Flow</summary>
+
 ```mermaid
 %%{init: {
   'theme':'base',
@@ -245,6 +248,8 @@ sequenceDiagram
     Note over SSC: Error Handling:<br/>- GraphQL errors<br/>- Network timeouts<br/>- Authentication issues
 ```
 
+</details>
+
 **Características Técnicas:**
 - **🔄 Singleton Pattern**: Uma instância por aplicação
 - **⚡ Connection Pooling**: Reutilização de conexões HTTP
@@ -260,6 +265,9 @@ sequenceDiagram
 - **🏗️ Transformação**: Formatação de dados para consumo
 
 **Fluxo de Processamento:**
+
+<details>
+<summary>📊 Sequence Diagram - OffersServices Processing Flow</summary>
 
 ```mermaid
 %%{init: {
@@ -320,6 +328,8 @@ sequenceDiagram
     Note over OS: Response Structure:<br/>├─ offer_id<br/>└─ metadata<br/>   ├─ title, price<br/>   ├─ course info<br/>   ├─ institution info<br/>   └─ campus info
 ```
 
+</details>
+
 **Características Técnicas:**
 - **🔧 Dependency Injection**: StockServicesClient injetado para testabilidade
 - **📊 Data Transformation**: Estruturação consistente de dados
@@ -335,6 +345,9 @@ sequenceDiagram
 - **🔑 Partitioning**: Estratégia de chaveamento para Kafka
 
 **Fluxo de Eventos:**
+
+<details>
+<summary>📊 Sequence Diagram - EventService Flow</summary>
 
 ```mermaid
 %%{init: {
@@ -372,6 +385,8 @@ sequenceDiagram
     
     Note over ES: Event Structure:<br/>├─ event_id (UUID)<br/>├─ event_type<br/>├─ timestamp<br/>├─ service: 'anubis'<br/>├─ version: '1.0'<br/>└─ data: original_payload
 ```
+
+</details>
 
 **Características Técnicas:**
 - **🔑 Event Sourcing**: Padrão de eventos imutáveis
