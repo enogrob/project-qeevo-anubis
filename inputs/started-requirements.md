@@ -17,13 +17,13 @@ O escopo do serviço não inclui o envio de leads do Quero Captação, alunos pa
 - Tidewave
 
 ### Input Sources
-- **Base Requirements**: #file:inputs/started-requirements.md (Contains description, ER diagrams, and sketched architecture). This is the document to be used as starting point.
-- **Epic Documentation**: #file:inputs/epico.md (High-level project epic and goals)
-- **Existing Codebase**: #folder:inputs/repositories/anubis (Starting point for Rails application structure). This repository  contains all the required Gems already installed and configured. Inclusive the database models for PostgreSQL.
+- **Base Requirements**: `#file:inputs/started-requirements.md` (Contains description, ER diagrams, and sketched architecture). This is the document to be used as starting point.
+- **Epic Documentation**: `#file:inputs/epico.md` (High-level project epic and goals)
+- **Existing Codebase**: `#folder:inputs/repositories/anubis` (Starting point for Rails application structure). This repository  contains all the required Gems already installed and configured. Inclusive the database models for PostgreSQL.
 - **Reference Architectures**:
-  - Similar microservice pattern and stack: #folder:inputs/repositories/quero-deals
-  - Integration examples: #folder:inputs/repositories/estacio-lead-integration
-  - Integration examples: #folder:inputs/repositories/kroton-lead-integration
+  - Similar microservice pattern and stack: `#folder:inputs/repositories/quero-deals`
+  - Integration examples: `#folder:inputs/repositories/estacio-lead-integration`
+  - Integration examples: `#folder:inputs/repositories/kroton-lead-integration`
 
 
 ## Modelo de Dados (ER Diagram)
@@ -440,5 +440,34 @@ end
 5. **📊 Observability**: Logging estruturado em todas as camadas
 6. **🔄 Maintainability**: Código organizado e padrões consistentes
 7. **⚡ Performance**: Cache inteligente e connection pooling
+
+---
+
+## 📚 Referências
+
+Esta seção contém links para documentações técnicas detalhadas e guias de implementação relacionados ao projeto Anubis:
+
+### 🔧 **Documentação Técnica**
+
+- **[📋 Requirements](../docs/requirements.md)** - Requisitos detalhados do projeto
+- **[📊 Kafka Implementation Guide](../docs/kafka-implementation-guide.md)** - Guia completo de implementação Kafka
+- **[🌐 Quero Deals](../docs/quero-deals.md)** - Documentação do sistema Quero Deals
+
+### 🏢 **Integrações com Instituições**
+
+- **[🎓 Estácio Lead Integration](../docs/estacio-lead-integration.md)** - Guia de integração com API da Estácio
+- **[🎓 Kroton Lead Integration](../docs/kroton-lead-integration.md)** - Guia de integração com API da Kroton
+
+### 📖 **Como Usar as Referências**
+
+Estas documentações fornecem:
+
+- **🔍 Detalhes de Implementação**: Especificações técnicas e exemplos de código
+- **🔧 Guias de Configuração**: Configurações necessárias para cada integração
+- **📊 Diagramas e Fluxos**: Visualizações detalhadas dos processos
+- **🛡️ Tratamento de Erros**: Estratégias de resiliência e recuperação
+- **🧪 Exemplos de Teste**: Cenários de teste e validação
+
+> **💡 Dica**: Use estas referências como complemento a este documento principal para obter informações mais específicas sobre implementações e integrações.
 
 
