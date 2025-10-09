@@ -54,36 +54,16 @@ graph TB
     
     subgraph "⚙️ State & Workflow"
         AASM[🎯 AASM 5.5<br/>State Machine]
-        SOLID_CACHE[📦 Solid Cache<br/>Rails Cache]
-        SOLID_QUEUE[📬 Solid Queue<br/>Background Jobs]
-        SOLID_CABLE[📡 Solid Cable<br/>WebSockets]
     end
     
     subgraph "🛠️ Development Tools"
         TIDEWAVE[🌊 Tidewave 0.3.1<br/>Development Helpers]
-        DEBUG[🐛 Debug<br/>Debugging]
-        WEB_CONSOLE[💻 Web Console<br/>Rails Console]
         KAMAL[🚢 Kamal<br/>Docker Deployment]
-        THRUSTER[🚀 Thruster<br/>Asset Optimization]
-    end
-    
-    subgraph "🎨 Frontend & Assets"
-        PROPSHAFT[📦 Propshaft<br/>Asset Pipeline]
-        IMPORTMAP[🗺️ Importmap Rails<br/>ES6 Modules]
-        TURBO[⚡ Turbo Rails<br/>SPA-like Navigation]
-        STIMULUS[⚡ Stimulus Rails<br/>JavaScript Framework]
-        JBUILDER[🏗️ JBuilder<br/>JSON Templates]
-    end
-    
-    subgraph "🔧 Infrastructure"
-        PUMA[🐾 Puma 5.0+<br/>Web Server]
-        BOOTSNAP[🏃 Bootsnap<br/>Boot Optimization]
     end
     
     %% Core Dependencies
     RUBY --> RAILS
     RAILS --> PG
-    RAILS --> PUMA
     
     %% API Integration Flow
     RAILS --> GQL
@@ -105,22 +85,9 @@ graph TB
     
     %% State Management
     RAILS --> AASM
-    RAILS --> SOLID_CACHE
-    RAILS --> SOLID_QUEUE
-    RAILS --> SOLID_CABLE
-    
-    %% Frontend Dependencies
-    RAILS --> PROPSHAFT
-    RAILS --> IMPORTMAP
-    RAILS --> TURBO
-    RAILS --> STIMULUS
-    RAILS --> JBUILDER
     
     %% Development Tools
     RAILS --> TIDEWAVE
-    RAILS --> DEBUG
-    RAILS --> WEB_CONSOLE
-    RAILS --> BOOTSNAP
     
     %% Quality Tools
     RAILS --> BRAKEMAN
@@ -128,7 +95,6 @@ graph TB
     
     %% Deployment
     RAILS --> KAMAL
-    PUMA --> THRUSTER
     
     %% Styling
     classDef coreStyle fill:#E8F4FD,stroke:#4A90E2,stroke-width:3px
@@ -144,25 +110,26 @@ graph TB
     class GQL,FARADAY,RETRY,OJ apiStyle
     class KAFKA,RDKAFKA,RACECAR eventStyle
     class RSPEC,SIMPLECOV,FACTORY,FAKER,SHOULDA,BRAKEMAN,RUBOCOP testStyle
-    class AASM,SOLID_CACHE,SOLID_QUEUE,SOLID_CABLE stateStyle
-    class TIDEWAVE,DEBUG,WEB_CONSOLE,KAMAL,THRUSTER devStyle
-    class PROPSHAFT,IMPORTMAP,TURBO,STIMULUS,JBUILDER frontendStyle
-    class PUMA,BOOTSNAP infraStyle
+    class AASM stateStyle
+    class TIDEWAVE,KAMAL devStyle
 ```
 
-### Input Sources
-- **Base Requirements**: `#file:inputs/started-requirements.md` (Contains description, ER diagrams, and sketched architecture). This is the document to be used as starting point.
-- **Epic Documentation**: `#file:inputs/epico.md` (High-level project epic and goals)
-- **Existing Codebase**: `#folder:inputs/repositories/anubis` (Starting point for Rails application structure). This repository  contains all the required Gems already installed and configured. Inclusive the database models for PostgreSQL.
-- **Reference Architectures**:
-  - Similar microservice pattern and stack: `#folder:inputs/repositories/quero-deals`
-  - Integration examples: `#folder:inputs/repositories/estacio-lead-integration`
-  - Integration examples: `#folder:inputs/repositories/kroton-lead-integration`
+### Entradas de Informação
+- **Requisitos Base**: `#file:inputs/started-requirements.md`. 
+- **Epico**: `#file:inputs/epico.md` 
+- **Base de código atual**: `#folder:inputs/repositories/anubis`.
+- **Arquitetura similar e exemplos de Integração**:
+  - Arquitetura similar: `#folder:inputs/repositories/quero-deals`
+  - Exemplo de integração: `#folder:inputs/repositories/estacio-lead-integration`
+  - Exemplo de integração: `#folder:inputs/repositories/kroton-lead-integration`
 
 
 ## Modelo de Dados (ER Diagram)
 
 📊 Diagrama Entidade-Relacionamento
+
+<details>
+<summary>📊 ER Diagram - Database Schema & Relationships</summary>
 
 ```mermaid
 %%{init: {
@@ -253,6 +220,8 @@ erDiagram
     timestamp updated_at
   }
 ```
+
+</details>
 
 ### 🛡️ Considerações de Segurança
 
