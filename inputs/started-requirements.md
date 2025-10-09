@@ -6,7 +6,7 @@ O Anubis é um microserviço responsável pela orquestração do envio de dados 
 
 O escopo do serviço não inclui o envio de leads do Quero Captação, alunos pagantes de outros produtos da Qeevo, agendamento de envios ou interface para reenvio manual de falhas. O foco está na integração eficiente e segura dos dados de alunos pagantes entre os sistemas internos e as APIs das instituições parceiras.
 
-**Tecnologias predominantes:**
+**Tecnologias predominantes**
 
 ```mermaid
 %%{init: {
