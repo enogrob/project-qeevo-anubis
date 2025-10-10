@@ -456,9 +456,27 @@ sequenceDiagram
 
 **Responsabilidades:**
 - **🎯 Propósito**: Publicação de eventos para sistemas externos via Kafka
-- **🔧 Padrão**: Service Object com publisher pattern
-- **📋 Estruturação**: Padronização de formato de eventos
-- **🔑 Partitioning**: Estratégia de chaveamento para Kafka
+- **🔧 Padrão**: Service Object com injeção de dependência testável
+- **📋 Estruturação**: Padronização de formato de eventos com versionamento
+- **🔑 Partitioning**: Estratégia de chaveamento por `subscription_id`
+- **🎪 Topic Management**: Gestão centralizada de tópicos Kafka
+- **✅ Payload Validation**: Validação rigorosa de estrutura e campos obrigatórios
+
+**Interface Pública:**
+```ruby
+# Publica evento de inscrição enviada
+event_subscription_sent(payload) -> String (event_id)
+
+# Futuro: evento de inscrição com falha
+event_subscription_failed(payload) -> String (event_id)
+```
+
+**Tópicos Kafka:**
+```ruby
+TOPICS = {
+  subscription_sent: "anubis.event.subscription.sent"
+}.freeze
+```
 
 **Fluxo de Eventos:**
 
@@ -487,17 +505,21 @@ sequenceDiagram
     participant Consumer as 👥 Consumer Groups
     
     Controller->>ES: event_subscription_sent(payload)
-    ES->>ES: validate_payload!
-    ES->>ES: build_event_payload
-    ES->>ES: extract_event_key (subscription_id)
-    ES->>ES: build_event_headers
+    ES->>ES: validate_payload!(payload)
+    Note over ES: Validation Rules:<br/>- payload not nil<br/>- payload is Hash<br/>- payload not empty<br/>- contains :subscription_id
     
-    ES->>Kafka: publish(topic, key, payload, headers)
-    Kafka->>Topic: Write to partition (based on key)
+    ES->>ES: build_event_payload(payload, :subscription_sent)
+    ES->>ES: extract_event_key(payload) -> subscription_id.to_s
+    ES->>ES: build_event_headers(payload, :subscription_sent)
+    
+    ES->>Kafka: @kafka_producer.call(topic:, message:, key:, headers:)
+    Note over ES,Kafka: Topic: TOPICS[:subscription_sent]<br/>"anubis.event.subscription.sent"
+    Kafka->>Topic: Write to partition (based on subscription_id key)
     Topic-->>Consumer: Event available for consumption
     
     Kafka-->>ES: Delivery confirmation
-    ES-->>Controller: Return event_id
+    ES->>ES: Log success with event_id and subscription_id
+    ES-->>Controller: Return event_id (UUID)
     
     Note over ES: Event Structure:<br/>├─ event_id (UUID)<br/>├─ event_type<br/>├─ timestamp<br/>├─ service: 'anubis'<br/>├─ version: '1.0'<br/>└─ data: original_payload
 ```
@@ -505,10 +527,14 @@ sequenceDiagram
 </details>
 
 **Características Técnicas:**
-- **🔑 Event Sourcing**: Padrão de eventos imutáveis
-- **📋 Schema Evolution**: Versionamento de eventos
-- **🎯 Partitioning Strategy**: Chaveamento por subscription_id
-- **🛡️ At-Least-Once Delivery**: Garantia de entrega
+- **🔑 Event Sourcing**: Padrão de eventos imutáveis com UUID
+- **📋 Schema Evolution**: Versionamento de eventos ("1.0") e estrutura padronizada
+- **🎯 Partitioning Strategy**: Chaveamento por `subscription_id.to_s`
+- **🛡️ Error Handling**: 2 níveis (ArgumentError re-raise, outros wrapping em EventServiceError)
+- **📊 Topic Management**: Constantes centralizadas (TOPICS hash)
+- **🔧 Dependency Injection**: Kafka::ProducerService injetável para testes
+- **✅ Comprehensive Validation**: 4 níveis de validação de payload
+- **📈 Enhanced Headers**: Headers estruturados com metadados do evento
 
 ### 🔄 **Padrões Arquiteturais Implementados**
 
@@ -521,12 +547,16 @@ sequenceDiagram
 ```ruby
 # Permite fácil substituição para testes
 offers_service = OffersServices.new(stock_client: mock_client)
-event_service = EventService.new(kafka_producer: mock_producer)
+event_service = EventService.new(kafka_producer: mock_kafka_producer)
 
 # Exemplo de uso em produção
 offers_service = OffersServices.new  # usa StockServicesClient.instance por padrão
+event_service = EventService.new     # usa Kafka::ProducerService por padrão
+
+# Uso dos serviços
 single_offer = offers_service.get_offer(123)
 batch_offers = offers_service.get_multiple_offers([123, 456, 789])
+event_id = event_service.event_subscription_sent({ subscription_id: 123, status: 'sent' })
 ```
 
 #### 3. **⏱️ Timeout Management Pattern**
@@ -546,8 +576,20 @@ end
 
 #### 5. **📋 Publisher-Subscriber Pattern**
 ```ruby
-# Publicação assíncrona de eventos
-@kafka_producer.publish(topic: topic, payload: payload)
+# Publicação assíncrona de eventos com estrutura padronizada
+@kafka_producer.call(
+  topic: TOPICS[:subscription_sent],
+  message: {
+    event_id: SecureRandom.uuid,
+    event_type: "subscription_sent",
+    timestamp: Time.current.iso8601,
+    service: "anubis",
+    version: "1.0",
+    data: payload
+  },
+  key: payload[:subscription_id].to_s,
+  headers: { "event_type" => "subscription_sent", "service" => "anubis" }
+)
 ```
 
 ### 🎯 **Benefícios da Arquitetura**
