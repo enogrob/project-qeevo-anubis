@@ -4,7 +4,7 @@
 
 O Anubis é um microserviço responsável pela orquestração do envio de dados de alunos pagantes para APIs de instituições de ensino superior, como Kroton e Estácio. Ele gerencia o fluxo de inscrições vindas do Quero Bolsa e dos novos marketplaces (Ead.com, Guia da Carreira e Mundo Vestibular), organizando os payloads e registrando logs estruturados com o status das tentativas, além de implementar mecanismos automáticos de retry para falhas temporárias.
 
-O escopo do serviço não inclui o envio de leads do Quero Captação, alunos pagantes de outros produtos da Qeevo, agendamento de envios ou interface para reenvio manual de falhas. O foco está na integração eficiente e segura dos dados de alunos pagantes entre os sistemas internos e as APIs das instituições parceiras.
+O escopo do serviço não inclui o envio de leads do Quero Captação, alunos pagantes de outros produtos da Qeevo, agendamento de envios ou interface para reenvio manual de falhas. O foco está na integração eficiente e segura dos dados de alunos pagantes entre os sistemas internos e das APIs das instituições parceiras.
 
 **Tecnologias predominantes**
 
@@ -30,8 +30,8 @@ graph TB
     end
     
     subgraph "🔌 API & Integration"
-        HTTP[� Net::HTTP<br/>Ruby Standard Library]
-        JSON[� JSON Parser<br/>Built-in Ruby JSON]
+        HTTP[🌐 Net::HTTP<br/>Ruby Standard Library]
+        JSON[📋 JSON Parser<br/>Built-in Ruby JSON]
         OJ[⚡ OJ 3.15.0<br/>Fast JSON Parser]
     end
     
@@ -353,17 +353,27 @@ sequenceDiagram
 - **🔄 Singleton Pattern**: Uma instância por aplicação
 - **🌐 Direct HTTP**: Implementação com Net::HTTP (Ruby standard library)
 - **⏱️ Timeout Configuration**: Controle granular de timeouts (open: 10s, read: 30s)
-- **� Security Headers**: User-Agent e headers de proteção CSRF
+- **🔐 Security Headers**: User-Agent e headers de proteção CSRF
 - **📊 Monitoring**: Logs estruturados para observabilidade
 - **🌍 Environment-aware**: URLs dinâmicas baseadas no ambiente Rails
 
 #### 2. 🎪 **OffersServices - Business Logic Layer**
 
 **Responsabilidades:**
-- **🎯 Propósito**: Orquestração da lógica de negócio para ofertas
-- **🔧 Padrão**: Service Object com injeção de dependência
-- **✅ Validação**: Validação de entrada e regras de negócio
-- **🏗️ Transformação**: Formatação de dados para consumo
+- **🎯 Propósito**: Orquestração da lógica de negócio para ofertas (single e batch)
+- **🔧 Padrão**: Service Object com injeção de dependência testável
+- **✅ Validação**: Validação rigorosa de entrada e regras de negócio (max 100 IDs)
+- **🏗️ Transformação**: Formatação estruturada e enriquecimento de metadados
+- **📊 Batch Processing**: Suporte a processamento em lote de ofertas
+
+**Interface Pública:**
+```ruby
+# Busca uma oferta individual
+get_offer(offer_id) -> Hash
+
+# Busca múltiplas ofertas (até 100)
+get_multiple_offers(offer_ids) -> Array[Hash]
+```
 
 **Fluxo de Processamento:**
 
@@ -392,50 +402,55 @@ sequenceDiagram
     participant API as 🏪 Stock Services API
     participant Logger as 📋 Logger
     
-    Controller->>OS: get_offer(offer_id)
-    OS->>Logger: Log request start
+    Controller->>OS: get_offer(offer_id) OR get_multiple_offers(offer_ids)
+    OS->>Logger: Log request start with ID(s) and count
     
-    OS->>OS: validate_offer_id!(offer_id)
+    OS->>OS: validate_offer_id!(offer_id) OR validate_offer_ids!(offer_ids)
     
-    alt Valid offer_id
-        OS->>SSC: get_offers_cached([offer_id])
+    alt Valid input
+        OS->>SSC: get_offers_cached([offer_id] OR offer_ids)
         SSC->>Cache: Check cache for offer data
         
         alt Cache Hit
             Cache-->>SSC: Return cached offer data
         else Cache Miss
-            SSC->>API: GraphQL query getOffers
-            API-->>SSC: Return offer data
+            SSC->>API: HTTP POST /graphql (Net::HTTP)
+            API-->>SSC: Return offer data array
             SSC->>Cache: Store in cache (TTL: 5min)
         end
         
-        SSC-->>OS: Return offer data array
+        SSC-->>OS: Return offers data array
         
-        alt Offer data found
-            OS->>OS: build_offer_response(offer_data)
-            OS->>OS: extract_metadata(offer_data)
-            OS->>Logger: Log success
-            OS-->>Controller: Return structured offer response
-        else No offer data
+        alt Offer(s) data found
+            OS->>OS: build_offer_response(offer_data) for each offer
+            OS->>OS: extract_metadata(offer_data) with comprehensive fields
+            OS->>Logger: Log success with metadata presence
+            OS-->>Controller: Return structured offer response(s)
+        else No offer data (single offer)
             OS->>Logger: Log offer not found
             OS-->>Controller: Raise OfferNotFoundError
+        else Partial data (multiple offers)
+            OS->>Logger: Log found count vs requested count
+            OS-->>Controller: Return available offers array
         end
         
-    else Invalid offer_id
-        OS->>Logger: Log validation error
-        OS-->>Controller: Raise ArgumentError
+    else Invalid input
+        OS->>Logger: Log validation error details
+        OS-->>Controller: Raise ArgumentError with specific message
     end
     
-    Note over OS: Response Structure:<br/>├─ offer_id<br/>└─ metadata<br/>   ├─ title, price<br/>   ├─ course info<br/>   ├─ institution info<br/>   └─ campus info
+    Note over OS: Response Structure:<br/>├─ offer_id<br/>└─ metadata<br/>   ├─ title, description, price, original_price<br/>   ├─ discount_percentage, modality, duration<br/>   ├─ course: {id, name, category}<br/>   ├─ institution: {id, name, logo}<br/>   ├─ campus: {id, name, city, state}<br/>   ├─ enabled, restricted, raw_metadata<br/>   └─ created_at, updated_at
 ```
 
 </details>
 
 **Características Técnicas:**
-- **🔧 Dependency Injection**: StockServicesClient injetado para testabilidade
-- **📊 Data Transformation**: Estruturação consistente de dados
-- **🛡️ Input Validation**: Validação rigorosa de parâmetros
-- **📋 Error Propagation**: Propagação inteligente de erros
+- **🔧 Dependency Injection**: StockServicesClient injetado para testabilidade completa
+- **📊 Rich Data Transformation**: Estruturação abrangente com 15+ campos de metadados
+- **🛡️ Comprehensive Validation**: Validação multi-nível (nil, empty, numeric, batch limits)
+- **📋 Intelligent Error Handling**: 4 tipos de exceções (ArgumentError, OfferNotFoundError, StockServicesError, OffersServiceError)
+- **📦 Batch Processing**: Suporte a até 100 ofertas por requisição
+- **📊 Structured Logging**: Logs detalhados com emojis e contexto completo
 
 #### 3. 📨 **EventService - Business Logic Layer**
 
@@ -505,8 +520,13 @@ sequenceDiagram
 #### 2. **🔧 Dependency Injection**
 ```ruby
 # Permite fácil substituição para testes
-OffersServices.new(stock_client: mock_client)
-EventService.new(kafka_producer: mock_producer)
+offers_service = OffersServices.new(stock_client: mock_client)
+event_service = EventService.new(kafka_producer: mock_producer)
+
+# Exemplo de uso em produção
+offers_service = OffersServices.new  # usa StockServicesClient.instance por padrão
+single_offer = offers_service.get_offer(123)
+batch_offers = offers_service.get_multiple_offers([123, 456, 789])
 ```
 
 #### 3. **⏱️ Timeout Management Pattern**
@@ -571,5 +591,3 @@ Estas documentações fornecem:
 - **🧪 Exemplos de Teste**: Cenários de teste e validação
 
 > **💡 Dica**: Use estas referências como complemento a este documento principal para obter informações mais específicas sobre implementações e integrações.
-
-
