@@ -96,25 +96,34 @@ graph TB
 ```bash
 # 1. Clone o Quero Boot (repositório principal)
 git clone https://github.com/quero-edu/quero-boot.git
-cd quero-boot
+```
 
+```bash
+cd quero-boot
+```
+
+```bash
 # 2. Clone o projeto Anubis dentro do Quero Boot
 git clone https://github.com/enogrob/project-qeevo-anubis.git
+```
 
+```bash
 # 3. Acesse o diretório do Anubis
 cd project-qeevo-anubis/src/anubis
+```
 
-# 4. Configure o ambiente através do Quero Boot
-# (As configurações são feitas automaticamente via Makefile)
-
+```bash
 # 5. Instale as dependências
 bundle install
+```
 
+```bash
 # 6. Configure o banco de dados de teste
 rails db:test:prepare
+```
 
-# 7. Verifique se todos os serviços estão rodando
-# O Anubis estará disponível na porta 3007
+```bash
+# 7. Verifique se todos os serviços estão rodando - O Anubis estará disponível na porta 3007
 curl -s http://localhost:3007/health || echo "Anubis não está rodando"
 ```
 
@@ -125,13 +134,18 @@ curl -s http://localhost:3007/health || echo "Anubis não está rodando"
 ### **1.1 Testes de Serviços Unitários**
 
 #### **StockServicesClient Tests**
+
 ```bash
 # Executar apenas testes do StockServicesClient
 bundle exec rspec spec/services/stock_services_client_spec.rb -v
+```
 
+```bash
 # Com formatação detalhada
 bundle exec rspec spec/services/stock_services_client_spec.rb --format documentation
+```
 
+```bash
 # Com coverage específico
 bundle exec rspec spec/services/stock_services_client_spec.rb --format html --out coverage/stock_services_client.html
 ```
@@ -142,16 +156,23 @@ bundle exec rspec spec/services/stock_services_client_spec.rb --format html --ou
 - ✅ Basic service structure
 
 #### **OffersServices Tests**
+
 ```bash
 # Executar testes completos do OffersServices
 bundle exec rspec spec/services/offers_services_spec.rb -v
+```
 
+```bash
 # Executar apenas testes de single offer
 bundle exec rspec spec/services/offers_services_spec.rb -e "get_offer"
+```
 
+```bash
 # Executar apenas testes de batch processing
 bundle exec rspec spec/services/offers_services_spec.rb -e "get_multiple_offers"
+```
 
+```bash
 # Com coverage detalhado
 bundle exec rspec spec/services/offers_services_spec.rb --format json --out coverage/offers_services.json
 ```
@@ -164,13 +185,18 @@ bundle exec rspec spec/services/offers_services_spec.rb --format json --out cove
 - ✅ Data transformation and validation
 
 #### **EventService Tests**
+
 ```bash
 # Executar testes completos do EventService
 bundle exec rspec spec/services/event_service_spec.rb -v
+```
 
+```bash
 # Executar apenas testes de publishing
 bundle exec rspec spec/services/event_service_spec.rb -e "event_subscription_sent"
+```
 
+```bash
 # Com debugging detalhado
 bundle exec rspec spec/services/event_service_spec.rb --format progress --backtrace
 ```
@@ -188,10 +214,14 @@ bundle exec rspec spec/services/event_service_spec.rb --format progress --backtr
 ```bash
 # Todos os testes de serviços com coverage
 bundle exec rspec spec/services/ --format documentation --format html --out coverage/services_report.html
+```
 
+```bash
 # Com métricas de performance
 bundle exec rspec spec/services/ --profile 10
+```
 
+```bash
 # Apenas falhas (se houver)
 bundle exec rspec spec/services/ --only-failures
 ```
@@ -203,31 +233,42 @@ bundle exec rspec spec/services/ --only-failures
 ### **2.1 Stock Services Integration Tests**
 
 #### **Connectivity & API Tests**
+
 ```bash
 # Teste completo de integração Stock Services
 bundle exec rspec spec/integration/stock_services_integration_spec.rb -v
+```
 
+```bash
 # Apenas testes de conectividade
 bundle exec rspec spec/integration/stock_services_integration_spec.rb -e "service availability"
+```
 
+```bash
 # Apenas testes de API calls
 bundle exec rspec spec/integration/stock_services_integration_spec.rb -e "get_offers method"
 ```
 
 #### **Direct Integration Tests**
+
 ```bash
 # Testes de integração direta (requer ambiente development)
 RAILS_ENV=development bundle exec rspec spec/integration/stock_services_direct_integration_spec.rb -v
+```
 
+```bash
 # Com logging detalhado
 RAILS_ENV=development bundle exec rspec spec/integration/stock_services_direct_integration_spec.rb --format documentation
 ```
 
 #### **API Specific Tests**
+
 ```bash
 # Testes específicos da API
 bundle exec rspec spec/integration/stock_services_api_spec.rb -v
+```
 
+```bash
 # Com timeout customizado
 STOCK_SERVICES_TIMEOUT=60 bundle exec rspec spec/integration/stock_services_api_spec.rb
 ```
@@ -237,7 +278,9 @@ STOCK_SERVICES_TIMEOUT=60 bundle exec rspec spec/integration/stock_services_api_
 ```bash
 # Testes de integração com Tidewave
 bundle exec rspec spec/integration/tidewave_integration_spec.rb -v
+```
 
+```bash
 # Com environment específico
 RAILS_ENV=development bundle exec rspec spec/integration/tidewave_integration_spec.rb
 ```
@@ -247,10 +290,14 @@ RAILS_ENV=development bundle exec rspec spec/integration/tidewave_integration_sp
 ```bash
 # Todos os testes de integração (apenas em development)
 RAILS_ENV=development bundle exec rspec spec/integration/ --format documentation
+```
 
+```bash
 # Com relatório HTML
 RAILS_ENV=development bundle exec rspec spec/integration/ --format html --out coverage/integration_report.html
+```
 
+```bash
 # Com retry em caso de falha de conectividade
 RAILS_ENV=development bundle exec rspec spec/integration/ --retry 3
 ```
@@ -262,13 +309,18 @@ RAILS_ENV=development bundle exec rspec spec/integration/ --retry 3
 ### **3.1 Stock Services Tasks**
 
 #### **Connectivity and API Testing**
+
 ```bash
 # Teste completo da API Stock Services
 bundle exec rake stock_services:test
+```
 
+```bash
 # Com environment específico
 RAILS_ENV=development bundle exec rake stock_services:test
+```
 
+```bash
 # Com timeout customizado
 STOCK_SERVICES_TIMEOUT=45 bundle exec rake stock_services:test
 ```
@@ -281,13 +333,18 @@ STOCK_SERVICES_TIMEOUT=45 bundle exec rake stock_services:test
 - 📊 Performance metrics and response times
 
 #### **Specific GraphQL Queries**
+
 ```bash
 # Teste específico do query getOffers
 bundle exec rake stock_services:test_get_offers
+```
 
+```bash
 # Teste com IDs específicos
 OFFER_IDS="125669,123456" bundle exec rake stock_services:test_get_offers
+```
 
+```bash
 # Com verbose logging
 VERBOSE=true bundle exec rake stock_services:test
 ```
@@ -295,10 +352,13 @@ VERBOSE=true bundle exec rake stock_services:test
 ### **3.2 Kafka Tasks**
 
 #### **Connection and Health Checks**
+
 ```bash
 # Verificar conexão com Kafka
 bundle exec rake kafka:check_connection
+```
 
+```bash
 # Com logging detalhado
 VERBOSE=true bundle exec rake kafka:check_connection
 ```
@@ -310,13 +370,18 @@ VERBOSE=true bundle exec rake kafka:check_connection
 - 🔧 Connection configuration validation
 
 #### **Producer Testing**
+
 ```bash
 # Teste do producer Kafka
 bundle exec rake kafka:test_producer
+```
 
+```bash
 # Teste com tópico específico
 TOPIC=test-anubis bundle exec rake kafka:test_producer
+```
 
+```bash
 # Teste de eventos de usuário
 bundle exec rake kafka:test_user_event
 ```
@@ -328,10 +393,13 @@ bundle exec rake kafka:test_user_event
 - 👤 User event structure validation
 
 #### **Fast Kafka Tests**
+
 ```bash
 # Testes rápidos do Kafka (sem setup completo)
 bundle exec rake kafka:fast_test
+```
 
+```bash
 # Com metrics
 METRICS=true bundle exec rake kafka:fast_test
 ```
@@ -341,10 +409,14 @@ METRICS=true bundle exec rake kafka:fast_test
 ```bash
 # Executar todas as rake tasks de teste
 bundle exec rake test:all_services
+```
 
+```bash
 # Com relatório consolidado
 bundle exec rake test:all_services REPORT=true
+```
 
+```bash
 # Apenas tasks que falharam (se houver)
 bundle exec rake test:failed_only
 ```
@@ -356,16 +428,29 @@ bundle exec rake test:failed_only
 ### **4.1 General Testing Scripts**
 
 #### **GetOffers Specification Tests**
+
 ```bash
 # Navegar para o diretório do projeto
-cd /app  # ou cd /home/roberto/Projects/project-geevo-anubis/src/anubis
+cd /app
+```
 
+Ou alternativamente:
+
+```bash
+cd /home/roberto/Projects/project-geevo-anubis/src/anubis
+```
+
+```bash
 # Executar teste de especificação getOffers
 ruby script/testing/test_getoffers_spec.rb
+```
 
+```bash
 # Com logging detalhado
 VERBOSE=true ruby script/testing/test_getoffers_spec.rb
+```
 
+```bash
 # Com timeout customizado
 TIMEOUT=60 ruby script/testing/test_getoffers_spec.rb
 ```
@@ -377,13 +462,18 @@ TIMEOUT=60 ruby script/testing/test_getoffers_spec.rb
 - ✅ GraphQL query syntax verification
 
 #### **Simple API Tests**
+
 ```bash
 # Teste simples da API com campos confirmados
 ruby script/testing/test_simple_offers.rb
+```
 
+```bash
 # Com IDs específicos
 OFFER_IDS="125669" ruby script/testing/test_simple_offers.rb
+```
 
+```bash
 # Com debug mode
 DEBUG=true ruby script/testing/test_simple_offers.rb
 ```
@@ -397,37 +487,52 @@ DEBUG=true ruby script/testing/test_simple_offers.rb
 ### **4.2 Service-Specific Scripts**
 
 #### **Stock Services Scripts**
+
 ```bash
 # Listar scripts disponíveis
 ls -la script/stock_services/
+```
 
+```bash
 # Executar script específico (se existir)
 ruby script/stock_services/connectivity_test.rb
+```
 
+```bash
 # Com environment específico
 RAILS_ENV=development ruby script/stock_services/performance_test.rb
 ```
 
 #### **Event Service Scripts**
+
 ```bash
 # Listar scripts de EventService
 ls -la script/event_service/
+```
 
+```bash
 # Executar teste de eventos (se existir)
 ruby script/event_service/kafka_publisher_test.rb
+```
 
+```bash
 # Com tópico específico
 TOPIC=anubis.event.subscription.sent ruby script/event_service/event_test.rb
 ```
 
 #### **Offers Services Scripts**
+
 ```bash
 # Listar scripts de OffersServices
 ls -la script/offers_services/
+```
 
+```bash
 # Executar teste de processamento (se existir)
 ruby script/offers_services/batch_processing_test.rb
+```
 
+```bash
 # Com batch size específico
 BATCH_SIZE=50 ruby script/offers_services/load_test.rb
 ```
@@ -441,10 +546,14 @@ BATCH_SIZE=50 ruby script/offers_services/load_test.rb
 ```bash
 # Executar TODOS os testes com coverage completo
 bundle exec rspec --format documentation --out coverage/full_report.txt
+```
 
+```bash
 # Com coverage HTML detalhado
 bundle exec rspec --format html --out coverage/index.html
+```
 
+```bash
 # Com métricas de performance
 bundle exec rspec --profile 20 --format json --out coverage/performance.json
 ```
@@ -454,10 +563,14 @@ bundle exec rspec --profile 20 --format json --out coverage/performance.json
 ```bash
 # Coverage apenas para serviços principais
 bundle exec rspec spec/services/ --format html --out coverage/services_coverage.html
+```
 
+```bash
 # Coverage para integração
 RAILS_ENV=development bundle exec rspec spec/integration/ --format html --out coverage/integration_coverage.html
+```
 
+```bash
 # Coverage consolidado com threshold
 COVERAGE_THRESHOLD=80 bundle exec rspec
 ```
@@ -467,10 +580,14 @@ COVERAGE_THRESHOLD=80 bundle exec rspec
 ```bash
 # Relatório de código com RuboCop
 bundle exec rubocop --format html --out coverage/rubocop_report.html
+```
 
+```bash
 # Scan de segurança com Brakeman
 bundle exec brakeman --format html --output coverage/security_report.html
+```
 
+```bash
 # Relatório consolidado de qualidade
 bundle exec rake quality:full_report
 ```
@@ -735,10 +852,14 @@ echo "📊 Relatórios disponíveis em: coverage/"
 ```bash
 # Métricas de tempo de execução
 bundle exec rspec --profile 10
+```
 
+```bash
 # Métricas de memória
 RUBY_GC_STATS=true bundle exec rspec spec/services/
+```
 
+```bash
 # Benchmark de API calls
 BENCHMARK=true bundle exec rake stock_services:test
 ```
@@ -748,10 +869,14 @@ BENCHMARK=true bundle exec rake stock_services:test
 ```bash
 # Logs detalhados durante testes
 LOG_LEVEL=debug bundle exec rspec spec/integration/
+```
 
+```bash
 # Logs específicos de Kafka
 KAFKA_DEBUG=true bundle exec rake kafka:test_producer
+```
 
+```bash
 # Logs de HTTP calls
 HTTP_DEBUG=true bundle exec rake stock_services:test
 ```
