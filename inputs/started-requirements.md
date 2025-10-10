@@ -30,9 +30,8 @@ graph TB
     end
     
     subgraph "🔌 API & Integration"
-        GQL[🎯 GraphQL Client 0.18.0<br/>Stock Services API]
-        FARADAY[🌐 Faraday 2.7.0<br/>HTTP Client]
-        RETRY[🔄 Faraday Retry 2.0.0<br/>Resilience]
+        HTTP[� Net::HTTP<br/>Ruby Standard Library]
+        JSON[� JSON Parser<br/>Built-in Ruby JSON]
         OJ[⚡ OJ 3.15.0<br/>Fast JSON Parser]
     end
     
@@ -65,10 +64,9 @@ graph TB
     RAILS --> PG
     
     %% API Integration Flow
-    RAILS --> GQL
-    GQL --> FARADAY
-    FARADAY --> RETRY
-    FARADAY --> OJ
+    RAILS --> HTTP
+    HTTP --> JSON
+    JSON --> OJ
     
     %% Event Streaming Flow
     RAILS --> RDKAFKA
@@ -103,7 +101,7 @@ graph TB
     classDef infraStyle fill:#EBF5FB,stroke:#3498DB,stroke-width:2px
     
     class RUBY,RAILS,PG coreStyle
-    class GQL,FARADAY,RETRY,OJ apiStyle
+    class HTTP,JSON,OJ apiStyle
     class KAFKA,RDKAFKA,RACECAR eventStyle
     class RSPEC,SIMPLECOV,FACTORY,FAKER,SHOULDA,BRAKEMAN,RUBOCOP testStyle
     class AASM stateStyle
@@ -253,7 +251,7 @@ graph TD
     subgraph "🏗️ Anubis Application"
         A[📱 Controllers] --> B[🎪 OffersServices]
         B --> C[🔌 StockServicesClient]
-        C --> D[📡 GraphQL Client]
+        C --> D[🌐 Net::HTTP Client]
         B --> E[📨 EventService]
         E --> F[📤 KafkaProducer]
     end
@@ -298,10 +296,10 @@ A arquitetura dos serviços segue o padrão de **3 camadas (3-Tier Architecture)
 #### 1. 🔌 **StockServicesClient - Data Access Layer**
 
 **Responsabilidades:**
-- **🎯 Propósito**: Cliente GraphQL para comunicação com a API stock-services
-- **🔧 Padrão**: Singleton para reutilização de conexões
-- **💾 Cache**: Implementa cache Redis para otimização de performance
-- **🛡️ Resiliência**: Retry automático e tratamento de erros
+- **🎯 Propósito**: Cliente HTTP direto para comunicação GraphQL com a API stock-services
+- **🔧 Padrão**: Singleton para reutilização de configurações
+- **💾 Cache**: Implementa cache Rails para otimização de performance
+- **🛡️ Resiliência**: Tratamento robusto de erros e timeouts configuráveis
 
 **Fluxo de Dados:**
 
@@ -336,24 +334,28 @@ sequenceDiagram
         Cache-->>SSC: Return cached data
         SSC-->>Caller: Return offers data
     else Cache Miss
-        SSC->>Logger: Log API request
-        SSC->>API: GraphQL Query getOffers
-        API-->>SSC: Return offers data
+        SSC->>Logger: Log direct HTTP request
+        SSC->>SSC: execute_http_request(query, variables)
+        SSC->>API: HTTP POST /graphql (Net::HTTP)
+        API-->>SSC: JSON response with offers data
+        SSC->>SSC: Parse JSON & validate response
         SSC->>Cache: Store in cache (TTL: 5min)
-        SSC->>Logger: Log success
-        SSC-->>Caller: Return offers data
+        SSC->>Logger: Log success with offer count
+        SSC-->>Caller: Return structured offers data
     end
     
-    Note over SSC: Error Handling:<br/>- GraphQL errors<br/>- Network timeouts<br/>- Authentication issues
+    Note over SSC: Error Handling:<br/>- GraphQL errors in response<br/>- HTTP timeouts (10s/30s)<br/>- JSON parsing errors<br/>- Network connectivity issues
 ```
 
 </details>
 
 **Características Técnicas:**
 - **🔄 Singleton Pattern**: Uma instância por aplicação
-- **⚡ Connection Pooling**: Reutilização de conexões HTTP
-- **🛡️ Circuit Breaker**: Proteção contra falhas em cascata
+- **🌐 Direct HTTP**: Implementação com Net::HTTP (Ruby standard library)
+- **⏱️ Timeout Configuration**: Controle granular de timeouts (open: 10s, read: 30s)
+- **� Security Headers**: User-Agent e headers de proteção CSRF
 - **📊 Monitoring**: Logs estruturados para observabilidade
+- **🌍 Environment-aware**: URLs dinâmicas baseadas no ambiente Rails
 
 #### 2. 🎪 **OffersServices - Business Logic Layer**
 
@@ -507,13 +509,11 @@ OffersServices.new(stock_client: mock_client)
 EventService.new(kafka_producer: mock_producer)
 ```
 
-#### 3. **🛡️ Circuit Breaker Pattern**
+#### 3. **⏱️ Timeout Management Pattern**
 ```ruby
-# Proteção contra falhas em cascata
-conn.request :retry, 
-             max: 3, 
-             interval: 0.5, 
-             backoff_factor: 2
+# Controle granular de timeouts para resiliência
+http.open_timeout = 10    # Connection timeout
+http.read_timeout = 30    # Read timeout
 ```
 
 #### 4. **💾 Cache-Aside Pattern**
