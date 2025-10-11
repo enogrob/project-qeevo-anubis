@@ -108,15 +108,6 @@ graph TB
     class TIDEWAVE devStyle
 ```
 
-### Entradas de Informação
-- **Requisitos Base**: `#file:inputs/started-requirements.md`. 
-- **Epico**: `#file:inputs/epico.md` 
-- **Base de código atual**: `#folder:inputs/repositories/anubis`.
-- **Arquitetura similar e exemplos de Integração**:
-  - Arquitetura similar: `#folder:inputs/repositories/quero-deals`
-  - Exemplo de integração: `#folder:inputs/repositories/estacio-lead-integration`
-  - Exemplo de integração: `#folder:inputs/repositories/kroton-lead-integration`
-
 
 ## Modelo de Dados (ER Diagram)
 
@@ -283,8 +274,6 @@ graph TD
     OffersServices -->|"🎁 Offer Data"| SubscriptionService
 
     %% Subscription orchestration
-    SubscriptionService -->|"🔄 Process External"| ExternalService1
-    SubscriptionService -->|"🔄 Process External"| ExternalService2
     SubscriptionService -->|"📡 Publish Events"| EventService
     SubscriptionService -->|"💾 Store Data"| Database
 
@@ -299,19 +288,30 @@ graph TD
     KafkaProducer -->|"📋 Subscription Events"| CRM
 
     %% Stock data flow
-    StockServicesClient --> |"🌐 Net::HTTP Client"| StockAPI
-    OffersServices --> StockServicesClient 
+    StockServicesClient ==> |"🌐 Net::HTTP Client"| StockAPI
+    OffersServices ==> |"Stock Data"| StockServicesClient
+
+    %% Business processing flow
+    OffersServices ==> |"🎁 Offer Data"| SubscriptionService
+
+    %% Subscription orchestration
+    SubscriptionService ==> |"📡 Publish Events"| EventService
+
+    %% Event publishing
+    EventService ==> |"📨 Publish Events"| KafkaProducer
 
     %% Styling for visual clarity
     classDef externalSystem fill:#FFE5B4,stroke:#F39C12,stroke-width:2px,color:#2C3E50
     classDef infrastructure fill:#ECECEC,stroke:#B0B0B0,stroke-width:2px,color:#2C3E50
     classDef domainService fill:#E3F2FD,stroke:#64B5F6,stroke-width:2px,color:#2C3E50
     classDef database fill:#F8E8F8,stroke:#9C27B0,stroke-width:2px,color:#2C3E50
+    classDef highlightRedBorder fill:#E3F2FD,stroke:#d32f2f,stroke-width:3px,color:#2C3E50
 
     class Montilla,QueroBolsa,StockAPI,ExternalAPI1,ExternalAPI2,CRM,QuerCRM externalSystem
     class StockServicesClient,KafkaConsumer,KafkaProducer,MessageBroker,ExternalClient1,ExternalClient2 infrastructure
     class OffersServices,SubscriptionService,LeadEvaluationService,MatchService,ExternalService1,ExternalService2,EventService domainService
     class Database database
+    class StockServicesClient,EventService,OffersServices highlightRedBorder
 ```
 
 ## 📚 Explicação da Arquitetura de Serviços
@@ -652,8 +652,8 @@ Esta seção contém links para documentações técnicas detalhadas e guias de 
 
 ### 🏢 **Integrações com Instituições**
 
-- **[🎓 Estácio Lead Integration](../docs/estacio-lead-integration.md)** - Guia de integração com API da Estácio
-- **[🎓 Kroton Lead Integration](../docs/kroton-lead-integration.md)** - Guia de integração com API da Kroton
+- **[🎓 Estácio Lead Integration](https://github.com/quero-edu/estacio-lead-integration)** - Guia de integração com API da Estácio
+- **[🎓 Kroton Lead Integration](https://github.com/quero-edu/kroton-lead-integration/blob/master/__docs__/kroton-lead-integration.md)** - Guia de integração com API da Kroton
 
 ### 📖 **Como Usar as Referências**
 
