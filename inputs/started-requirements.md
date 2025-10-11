@@ -271,7 +271,6 @@ graph TD
     %% Business processing flow
     LeadEvaluationService -->|"🎯 Match Lead"| MatchService
     LeadEvaluationService -->|"📨 Kafka Events"| SubscriptionService
-    OffersServices -->|"🎁 Offer Data"| SubscriptionService
 
     %% Subscription orchestration
     SubscriptionService -->|"📡 Publish Events"| EventService
@@ -284,7 +283,6 @@ graph TD
     ExternalClient2 -->|"📤 Send Data"| ExternalAPI2
 
     %% Event publishing
-    EventService -->|"📨 Publish Events"| KafkaProducer
     KafkaProducer -->|"📋 Subscription Events"| CRM
 
     %% Stock data flow
