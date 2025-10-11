@@ -217,21 +217,9 @@ erDiagram
 
 </details>
 
-### 🛡️ Considerações de Segurança
-
-**Segurança:**
-- CPF deve ser não precisa ser hasheado/criptografado em produção
-- Tokens não devem ser armazenados com criptografia
-
-
 ## Arquitetura do Projeto
 
-![](assets/anubis-architecture.png)
-
-**📋 Explicação da Arquitetura**
-
-
-### 🔧 Arquitetura de Serviços
+<!-- ![](assets/anubis-architecture.png) -->
 
 ```mermaid
 %%{init: {
@@ -248,38 +236,83 @@ erDiagram
   }
 }}%%
 graph TD
-    subgraph "🏗️ Anubis Application"
-        A[📱 Controllers] --> B[🎪 OffersServices]
-        B --> C[🔌 StockServicesClient]
-        C --> D[🌐 Net::HTTP Client]
-        B --> E[📨 EventService]
-        E --> F[📤 KafkaProducer]
+    subgraph "🌐 External Systems Layer"
+        direction TB
+        Montilla["🏢 Montilla<br/>Lead Source"]
+        QueroBolsa["📚 Quero Bolsa<br/>Marketplace"]
+        StockAPI["📊 Stock Services API<br/>GraphQL Endpoint"]
+        ExternalAPI1["🎓 Institution API 1<br/>Kroton/Estácio"]
+        ExternalAPI2["🎓 Institution API 2<br/>Partner Institutions"]
+        CRM["🏢 CRM System<br/>Customer Data"]
+        QuerCRM["📋 Quer CRM<br/>Lead Management"]
     end
-    
-    subgraph "☁️ External Services"
-        G[🏪 Stock Services API<br/>GraphQL Endpoint]
-        H[📋 Kafka Cluster<br/>anubis.event.subscription.sent]
-    end
-    
-    subgraph "🛠️ Infrastructure"
-        I[📊 Cache]
-        J[📋 Rails Logger]
-        K[⚠️ Error Tracking]
-    end
-    
-    D --> G
-    F --> H
-    C --> I
-    C --> J
-    E --> J
-    C --> K
-    E --> K
-    
-    style C fill:#E8F4FD,stroke:#4A90E2,stroke-width:3px
-    style B fill:#F0F8E8,stroke:#67C52A,stroke-width:3px
-    style E fill:#FDF2E8,stroke:#F39C12,stroke-width:3px
-```
 
+    subgraph "🔌 Infrastructure Layer"
+        direction TB
+        StockServicesClient["📡 StockServicesClient<br/>HTTP Adapter"]
+        KafkaConsumer["📥 Kafka Consumer<br/>Event Ingestion"]
+        KafkaProducer["📤 Kafka Producer<br/>Event Publishing"]
+        MessageBroker["📨 Message Broker<br/>Event Router"]
+        ExternalClient1["🔗 External Client 1<br/>Institution Adapter"]
+        ExternalClient2["🔗 External Client 2<br/>Partner Adapter"]
+        Database[("🗄️ PostgreSQL<br/>Subscriptions DB")]
+    end
+
+    subgraph "🎯 Business Domain Layer"
+        direction TB
+        OffersServices["🎁 OffersServices<br/>Stock Management"]
+        SubscriptionService["📝 SubscriptionService<br/>Core Orchestration"]
+        LeadEvaluationService["🔍 LeadEvaluationService<br/>Business Rules"]
+        MatchService["🎯 MatchService<br/>Lead Processing"]
+        ExternalService1["🔄 ExternalService1<br/>Kroton Integration"]
+        ExternalService2["🔄 ExternalService2<br/>Estácio Integration"]
+        EventService["📡 EventService<br/>Publishing Logic"]
+    end
+
+    %% Data Flow Connections
+    %% Lead ingestion flow
+    Montilla -->|"📤 Create Lead"| QuerCRM
+    QueroBolsa -->|"📦 External Order"| QuerCRM
+    QuerCRM -->|"📨 Lead Events"| KafkaConsumer
+    KafkaConsumer -->|"🔄 Process Events"| MessageBroker
+    MessageBroker -->|"📋 Evaluate Lead"| LeadEvaluationService
+
+    %% Business processing flow
+    LeadEvaluationService -->|"🎯 Match Lead"| MatchService
+    LeadEvaluationService -->|"📨 Kafka Events"| SubscriptionService
+    OffersServices -->|"🎁 Offer Data"| SubscriptionService
+
+    %% Subscription orchestration
+    SubscriptionService -->|"🔄 Process External"| ExternalService1
+    SubscriptionService -->|"🔄 Process External"| ExternalService2
+    SubscriptionService -->|"📡 Publish Events"| EventService
+    SubscriptionService -->|"💾 Store Data"| Database
+
+    %% External integrations
+    ExternalService1 -->|"🔗 API Calls"| ExternalClient1
+    ExternalService2 -->|"🔗 API Calls"| ExternalClient2
+    ExternalClient1 -->|"📤 Send Data"| ExternalAPI1
+    ExternalClient2 -->|"📤 Send Data"| ExternalAPI2
+
+    %% Event publishing
+    EventService -->|"📨 Publish Events"| KafkaProducer
+    KafkaProducer -->|"📋 Subscription Events"| CRM
+
+    %% Stock data flow
+    StockServicesClient --> |"🌐 Net::HTTP Client"| StockAPI
+    OffersServices --> StockServicesClient 
+
+    %% Styling for visual clarity
+    classDef externalSystem fill:#FFE5B4,stroke:#F39C12,stroke-width:2px,color:#2C3E50
+    classDef infrastructure fill:#ECECEC,stroke:#B0B0B0,stroke-width:2px,color:#2C3E50
+    classDef domainService fill:#E3F2FD,stroke:#64B5F6,stroke-width:2px,color:#2C3E50
+    classDef database fill:#F8E8F8,stroke:#9C27B0,stroke-width:2px,color:#2C3E50
+
+    class Montilla,QueroBolsa,StockAPI,ExternalAPI1,ExternalAPI2,CRM,QuerCRM externalSystem
+    class StockServicesClient,KafkaConsumer,KafkaProducer,MessageBroker,ExternalClient1,ExternalClient2 infrastructure
+    class OffersServices,SubscriptionService,LeadEvaluationService,MatchService,ExternalService1,ExternalService2,EventService domainService
+    class Database database
+```
 
 ## 📚 Explicação da Arquitetura de Serviços
 
