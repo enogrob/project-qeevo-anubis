@@ -235,7 +235,7 @@ graph TD
         ExternalAPI1["🎓 Institution API 1<br/>Kroton/Estácio"]
         ExternalAPI2["🎓 Institution API 2<br/>Partner Institutions"]
         CRM["🏢 CRM System<br/>Customer Data"]
-        QuerCRM["📋 Quer CRM<br/>Lead Management"]
+        QuerCRM["📋 Quero CRM<br/>Lead Management"]
     end
 
     subgraph "🔌 Infrastructure Layer"
