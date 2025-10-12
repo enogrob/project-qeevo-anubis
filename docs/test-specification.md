@@ -94,7 +94,7 @@ graph TB
 #### **Setup Completo do Ambiente**
 
 ```bash
-# 1. Clone o Quero Boot (repositório principal)
+# 1. Clone o Quero Boot (repositório principal) 
 git clone https://github.com/quero-edu/quero-boot.git
 ```
 
@@ -103,27 +103,19 @@ cd quero-boot
 ```
 
 ```bash
-# 2. Clone o projeto Anubis dentro do Quero Boot
+# 2. Clone o projeto Anubis dentro do Quero Boot and run secrets
 git clone https://github.com/enogrob/project-qeevo-anubis.git
+./secrets.sh
 ```
 
 ```bash
-# 3. Acesse o diretório do Anubis
-cd project-qeevo-anubis/src/anubis
+# 3. Starting and accessing the Anubis Service
+docker-compose up -d anubis
+docker compose run --rm anubis bash
 ```
 
 ```bash
-# 5. Instale as dependências
-bundle install
-```
-
-```bash
-# 6. Configure o banco de dados de teste
-rails db:test:prepare
-```
-
-```bash
-# 7. Verifique se todos os serviços estão rodando - O Anubis estará disponível na porta 3007
+# 4. erifique se todos os serviços estão rodando - em um outro terminal, O Anubis estará disponível na porta 3007
 curl -s http://localhost:3007/health || echo "Anubis não está rodando"
 ```
 
