@@ -337,6 +337,7 @@ bundle exec rake stock_services:config
 **Resultados Esperados:**
 - 🔌 Basic connectivity test
 - 📊 Performance metrics and response times
+- 🔧 Configuration test
 
 
 **Resultados Esperados:**
@@ -345,22 +346,6 @@ bundle exec rake stock_services:config
 - 🔍 Teste de IDs específicos e análise de resultados
 - 📝 Logging detalhado para troubleshooting
 
-#### **Field Inspection and Schema Analysis**
-
-```bash
-# Inspecionar campos disponíveis na API
-bundle exec rake stock_services:inspect_fields
-```
-
-```bash
-# Analisar schema GraphQL
-bundle exec rake stock_services:schema_analysis
-```
-
-**Resultados Esperados:**
-- 🗂️ Listagem de todos os campos disponíveis
-- 📋 Análise de tipos e constraints do schema
-- ✅ Validação de compatibilidade entre client e API
 
 ### **3.2 Kafka Tasks**
 
@@ -442,15 +427,9 @@ bundle exec rake test:failed_only
 
 #### **GetOffers Specification Tests**
 
-```bash
 # Navegar para o diretório do projeto
-cd /app
-```
-
-Ou alternativamente:
-
 ```bash
-cd /home/roberto/Projects/project-geevo-anubis/src/anubis
+cd /app
 ```
 
 ```bash
@@ -507,14 +486,45 @@ ls -la script/stock_services/
 ```
 
 ```bash
-# Executar script específico (se existir)
-ruby script/stock_services/connectivity_test.rb
+# Teste de integração completo
+ruby script/stock_services/test_stock_services_integration.rb
 ```
 
 ```bash
-# Com environment específico
-RAILS_ENV=development ruby script/stock_services/performance_test.rb
+# Teste minimalista (campos mais seguros)
+ruby script/stock_services/test_stock_services_minimal.rb
 ```
+
+```bash
+# Teste direto de endpoint
+ruby script/stock_services/test_stock_services_direct.rb
+```
+
+```bash
+# Teste de schema GraphQL
+ruby script/stock_services/test_stock_services_schema.rb
+```
+
+```bash
+# Teste de implementação funcional
+ruby script/stock_services/test_stock_services_working.rb
+```
+
+```bash
+# Inspeção dos campos disponíveis
+ruby script/stock_services/inspect_offer_fields.rb
+```
+
+**Documentação e análise:**
+- `STOCK_SERVICES_API_TESTING.md` — Metodologia e resultados dos testes de API
+- `STOCK_SERVICES_FINAL_RESULTS.md` — Validação final e features confirmadas
+- `STOCK_SERVICES_WORKING_ANALYSIS.md` — Detalhes da implementação funcional
+
+**Resultados Esperados:**
+- ✅ Testes de integração e conectividade
+- 📋 Validação de schema e campos
+- 🔍 Testes de queries e endpoints reais
+- 🗂️ Análise de resultados e performance
 
 #### **Event Service Scripts**
 
