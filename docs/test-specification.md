@@ -534,14 +534,38 @@ ls -la script/event_service/
 ```
 
 ```bash
-# Executar teste de eventos (se existir)
-ruby script/event_service/kafka_publisher_test.rb
+# Teste de integração real com Kafka
+ruby script/event_service/test_event_service_real_kafka.rb
 ```
 
 ```bash
-# Com tópico específico
-TOPIC=anubis.event.subscription.sent ruby script/event_service/event_test.rb
+# Simulação local do EventService
+ruby script/event_service/test_event_service_local_simulation.rb
 ```
+
+```bash
+# Análise dos tópicos Kafka
+ruby script/event_service/analyze_kafka_topics.rb
+```
+
+```bash
+# Comparação entre mock e Kafka real
+ruby script/event_service/compare_mock_vs_real.rb
+```
+
+```bash
+# Spec aprimorado para EventService
+ruby script/event_service/enhanced_event_service_spec.rb
+```
+
+**Documentação e análise:**
+- `REAL_INTEGRATION_SUMMARY.md` — Resumo dos testes de integração real com Kafka
+
+**Resultados Esperados:**
+- ✅ Testes de publicação e consumo de eventos reais
+- 🔍 Análise de tópicos e headers Kafka
+- 📝 Comparação entre comportamento mock e real
+- 📊 Validação de performance e confiabilidade
 
 #### **Offers Services Scripts**
 
@@ -551,14 +575,50 @@ ls -la script/offers_services/
 ```
 
 ```bash
-# Executar teste de processamento (se existir)
-ruby script/offers_services/batch_processing_test.rb
+# Teste com dados reais da API
+ruby script/offers_services/test_offers_services_real_api.rb
 ```
 
 ```bash
-# Com batch size específico
-BATCH_SIZE=50 ruby script/offers_services/load_test.rb
+# Análise de cobertura de testes
+ruby script/offers_services/analyze_test_coverage.rb
 ```
+
+```bash
+# Comparação de necessidades de cobertura
+ruby script/offers_services/compare_test_coverage_needs.rb
+```
+
+```bash
+# Teste de alta prioridade
+ruby script/offers_services/demo_high_priority_test.rb
+```
+
+```bash
+# Exemplos aprimorados de teste
+ruby script/offers_services/enhanced_test_examples.rb
+```
+
+```bash
+# Testes aprimorados para adicionar
+ruby script/offers_services/enhanced_tests_to_add.rb
+```
+
+```bash
+# Melhorias mínimas para Stock Services
+ruby script/offers_services/minimal_stock_services_enhancements.rb
+```
+
+**Documentação e análise:**
+- `README.md` — Resumo e instruções de uso dos scripts
+- `IMPLEMENTATION_SUMMARY.md` — Resumo da implementação e status
+- `TEST_ENHANCEMENT_SUGGESTIONS.md` — Estratégias para aprimorar cobertura de testes
+
+**Resultados Esperados:**
+- ✅ Testes de OffersServices com dados reais e mock
+- 📊 Análise e comparação de cobertura de testes
+- 🔥 Execução de casos críticos e aprimorados
+- 📝 Sugestões para melhoria contínua da cobertura
 
 ---
 
