@@ -74,7 +74,7 @@ graph TB
     
     %% Development Dependencies
     ANUBIS -.->|🔍 Search/Analytics| OPENSEARCH
-    OPENSEARCH --> DASHBOARDS
+    OPENSEARCH --> DASHBO
     ANUBIS -.->|📁 File Storage| LOCALSTACK
     
     %% Styling with pastel colors for light/dark theme compatibility
@@ -123,7 +123,7 @@ docker compose run --rm anubis bash
 
 ```bash
 # 5. erifique se todos os serviços estão rodando - em um outro terminal, O Anubis estará disponível na porta 3007
-curl -s http://localhost:3007/health || echo "Anubis não está rodando"
+xdg-open http://localhost:3007
 ```
 
 ---
@@ -298,7 +298,7 @@ RAILS_ENV=development bundle exec rspec spec/integration/ --format html --out co
 
 ```bash
 # Com retry em caso de falha de conectividade
-RAILS_ENV=development bundle exec rspec spec/integration/ --retry 3
+RAILS_ENV=development bundle exec rspec spec/integration/ 
 ```
 
 ---
@@ -347,6 +347,29 @@ OFFER_IDS="125669,123456" bundle exec rake stock_services:test_get_offers
 # Com verbose logging
 VERBOSE=true bundle exec rake stock_services:test
 ```
+
+**Resultados Esperados:**
+- 📋 Query getOffers com parâmetros customizados
+- ✅ Validação de campos e estrutura de resposta
+- 🔍 Teste de IDs específicos e análise de resultados
+- 📝 Logging detalhado para troubleshooting
+
+#### **Field Inspection and Schema Analysis**
+
+```bash
+# Inspecionar campos disponíveis na API
+bundle exec rake stock_services:inspect_fields
+```
+
+```bash
+# Analisar schema GraphQL
+bundle exec rake stock_services:schema_analysis
+```
+
+**Resultados Esperados:**
+- 🗂️ Listagem de todos os campos disponíveis
+- 📋 Análise de tipos e constraints do schema
+- ✅ Validação de compatibilidade entre client e API
 
 ### **3.2 Kafka Tasks**
 
