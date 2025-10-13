@@ -106,6 +106,9 @@ cd quero-boot
 # 2. Clone o projeto Anubis dentro do Quero Boot and run secrets
 git clone https://github.com/enogrob/project-qeevo-anubis.git
 ./secrets.sh
+ls -la envs/anubis.env
+:
+-rw-r--r-- 1 roberto roberto 1266 out  9 10:48 envs/anubis.env
 ```
 
 ```bash
