@@ -96,14 +96,11 @@ graph TB
 ```bash
 # 1. Clone o Quero Boot (repositório principal) 
 git clone https://github.com/quero-edu/quero-boot.git
-```
-
-```bash
 cd quero-boot
 ```
 
 ```bash
-# 2. Clone o projeto Anubis dentro do Quero Boot and run secrets
+# 2. Clone o projeto Anubis dentro do Quero Boot e rode o secrets
 git clone https://github.com/enogrob/project-qeevo-anubis.git
 ./secrets.sh
 ls -la envs/anubis.env
@@ -112,17 +109,17 @@ ls -la envs/anubis.env
 ```
 
 ```bash
-# 3. Starting and the Anubis Service
+# 3. inicie o Serviço Anubis
 docker-compose up -d anubis
 ```
 
 ```bash
-# 4. Accessing the Anubis Service
+# 4. Acesse o Serviço Anubis
 docker compose run --rm anubis bash
 ```
 
 ```bash
-# 5. erifique se todos os serviços estão rodando - em um outro terminal, O Anubis estará disponível na porta 3007
+# 5. Verifique se todos os serviços estão rodando em um outro terminal, O Anubis estará disponível na porta 3007
 xdg-open http://localhost:3007
 ```
 
