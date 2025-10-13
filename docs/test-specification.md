@@ -805,7 +805,6 @@ echo "=" * 60
 # 1. Setup do ambiente
 echo "🏗️ Preparando ambiente de teste..."
 bundle install
-rails db:test:prepare
 
 # 2. Testes unitários de serviços
 echo "🧪 Executando testes unitários..."
@@ -818,7 +817,7 @@ RAILS_ENV=development bundle exec rspec spec/integration/ --format documentation
 # 4. Rake tasks de validação
 echo "⚙️ Executando rake tasks..."
 bundle exec rake stock_services:test
-bundle exec rake kafka:check_connection
+bundle exec rake kafka:fast_test
 
 # 5. Scripts de integração
 echo "📂 Executando scripts de integração..."
@@ -863,12 +862,12 @@ BENCHMARK=true bundle exec rake stock_services:test
 
 ```bash
 # Logs detalhados durante testes
-LOG_LEVEL=debug bundle exec rspec spec/integration/
+RAILS_ENV=development LOG_LEVEL=debug bundle exec rspec spec/integration/
 ```
 
 ```bash
 # Logs específicos de Kafka
-KAFKA_DEBUG=true bundle exec rake kafka:test_producer
+KAFKA_DEBUG=true bundle exec rake kafka:fast_test
 ```
 
 ```bash
