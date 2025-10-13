@@ -264,12 +264,12 @@ RAILS_ENV=development bundle exec rspec spec/integration/stock_services_direct_i
 
 ```bash
 # Testes específicos da API
-bundle exec rspec spec/integration/stock_services_api_spec.rb -v
+RAILS_ENV=development bundle exec rspec spec/integration/stock_services_api_spec.rb -v
 ```
 
 ```bash
 # Com timeout customizado
-STOCK_SERVICES_TIMEOUT=60 bundle exec rspec spec/integration/stock_services_api_spec.rb
+RAILS_ENV=development STOCK_SERVICES_TIMEOUT=60 bundle exec rspec spec/integration/stock_services_api_spec.rb
 ```
 
 ### **2.2 Tidewave Integration Tests**
