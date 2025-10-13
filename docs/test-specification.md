@@ -324,29 +324,20 @@ RAILS_ENV=development bundle exec rake stock_services:test
 STOCK_SERVICES_TIMEOUT=45 bundle exec rake stock_services:test
 ```
 
+```bash
+# Test de performance
+bundle exec rake stock_services:performance
+```
+
+```bash
+# Test de config
+bundle exec rake stock_services:config
+```
+
 **Resultados Esperados:**
 - 🔌 Basic connectivity test
-- 📋 GraphQL schema introspection
-- 🔍 Basic query validation
-- 🎯 GetOffers query with real data
 - 📊 Performance metrics and response times
 
-#### **Specific GraphQL Queries**
-
-```bash
-# Teste específico do query getOffers
-bundle exec rake stock_services:test_get_offers
-```
-
-```bash
-# Teste com IDs específicos
-OFFER_IDS="125669,123456" bundle exec rake stock_services:test_get_offers
-```
-
-```bash
-# Com verbose logging
-VERBOSE=true bundle exec rake stock_services:test
-```
 
 **Resultados Esperados:**
 - 📋 Query getOffers com parâmetros customizados
