@@ -517,16 +517,6 @@ ruby script/offers_services/demo_high_priority_test.rb
 ```
 
 ```bash
-# Exemplos aprimorados de teste
-ruby script/offers_services/enhanced_test_examples.rb
-```
-
-```bash
-# Testes aprimorados para adicionar
-ruby script/offers_services/enhanced_tests_to_add.rb
-```
-
-```bash
 # Melhorias mínimas para Stock Services
 ruby script/offers_services/minimal_stock_services_enhancements.rb
 ```
