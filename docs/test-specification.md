@@ -349,48 +349,7 @@ bundle exec rake stock_services:config
 
 ### **3.2 Kafka Tasks**
 
-#### **Connection and Health Checks**
-
-```bash
-# Verificar conexão com Kafka
-bundle exec rake kafka:check_connection
-```
-
-```bash
-# Com logging detalhado
-VERBOSE=true bundle exec rake kafka:check_connection
-```
-
-**Resultados Esperados:**
-- ✅ Kafka broker connectivity
-- 📊 Broker count and list
-- 📝 Available topics list
-- 🔧 Connection configuration validation
-
-#### **Producer Testing**
-
-```bash
-# Teste do producer Kafka
-bundle exec rake kafka:test_producer
-```
-
-```bash
-# Teste com tópico específico
-TOPIC=test-anubis bundle exec rake kafka:test_producer
-```
-
-```bash
-# Teste de eventos de usuário
-bundle exec rake kafka:test_user_event
-```
-
-**Resultados Esperados:**
-- 🚀 Test message publishing
-- 📨 Message structure validation
-- ✅ Producer service functionality
-- 👤 User event structure validation
-
-#### **Fast Kafka Tests**
+## Fast Kafka Tests
 
 ```bash
 # Testes rápidos do Kafka (sem setup completo)
@@ -400,23 +359,6 @@ bundle exec rake kafka:fast_test
 ```bash
 # Com metrics
 METRICS=true bundle exec rake kafka:fast_test
-```
-
-### **3.3 Complete Rake Test Suite**
-
-```bash
-# Executar todas as rake tasks de teste
-bundle exec rake test:all_services
-```
-
-```bash
-# Com relatório consolidado
-bundle exec rake test:all_services REPORT=true
-```
-
-```bash
-# Apenas tasks que falharam (se houver)
-bundle exec rake test:failed_only
 ```
 
 ---
