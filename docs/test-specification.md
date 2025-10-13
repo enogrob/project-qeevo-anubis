@@ -235,17 +235,17 @@ bundle exec rspec spec/services/ --only-failures
 
 ```bash
 # Teste completo de integração Stock Services
-bundle exec rspec spec/integration/stock_services_integration_spec.rb -v
+RAILS_ENV=development bundle exec rspec spec/integration/stock_services_integration_spec.rb -v
 ```
 
 ```bash
 # Apenas testes de conectividade
-bundle exec rspec spec/integration/stock_services_integration_spec.rb -e "service availability"
+RAILS_ENV=development bundle exec rspec spec/integration/stock_services_integration_spec.rb -e "service availability"
 ```
 
 ```bash
 # Apenas testes de API calls
-bundle exec rspec spec/integration/stock_services_integration_spec.rb -e "get_offers method"
+RAILS_ENV=development bundle exec rspec spec/integration/stock_services_integration_spec.rb -e "get_offers method"
 ```
 
 #### **Direct Integration Tests**
