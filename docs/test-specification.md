@@ -112,13 +112,17 @@ ls -la envs/anubis.env
 ```
 
 ```bash
-# 3. Starting and accessing the Anubis Service
+# 3. Starting and the Anubis Service
 docker-compose up -d anubis
+```
+
+```bash
+# 4. Accessing the Anubis Service
 docker compose run --rm anubis bash
 ```
 
 ```bash
-# 4. erifique se todos os serviços estão rodando - em um outro terminal, O Anubis estará disponível na porta 3007
+# 5. erifique se todos os serviços estão rodando - em um outro terminal, O Anubis estará disponível na porta 3007
 curl -s http://localhost:3007/health || echo "Anubis não está rodando"
 ```
 
