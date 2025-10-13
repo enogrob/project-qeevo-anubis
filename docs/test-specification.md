@@ -476,28 +476,8 @@ ls -la script/event_service/
 ```
 
 ```bash
-# Teste de integração real com Kafka
-ruby script/event_service/test_event_service_real_kafka.rb
-```
-
-```bash
-# Simulação local do EventService
-ruby script/event_service/test_event_service_local_simulation.rb
-```
-
-```bash
-# Análise dos tópicos Kafka
-ruby script/event_service/analyze_kafka_topics.rb
-```
-
-```bash
 # Comparação entre mock e Kafka real
 ruby script/event_service/compare_mock_vs_real.rb
-```
-
-```bash
-# Spec aprimorado para EventService
-ruby script/event_service/enhanced_event_service_spec.rb
 ```
 
 **Documentação e análise:**
