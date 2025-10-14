@@ -12,100 +12,103 @@ O escopo do serviço não inclui o envio de leads do Quero Captação, alunos pa
 %%{init: {
   'theme':'base',
   'themeVariables': {
-    'primaryColor':'#E8F4FD',
-    'primaryBorderColor':'#4A90E2',
-    'primaryTextColor':'#2C3E50',
-    'secondaryColor':'#F0F8E8',
-    'tertiaryColor':'#FDF2E8',
-    'quaternaryColor':'#F8E8F8',
-    'lineColor':'#5D6D7E',
-    'fontFamily':'Inter,Segoe UI,Arial'
+  'primaryColor':'#E8F4FD',
+  'primaryBorderColor':'#4A90E2',
+  'primaryTextColor':'#2C3E50',
+  'secondaryColor':'#F0F8E8',
+  'tertiaryColor':'#FDF2E8',
+  'quaternaryColor':'#F8E8F8',
+  'lineColor':'#5D6D7E',
+  'fontFamily':'Inter,Segoe UI,Arial'
   }
 }}%%
 graph TB
-    subgraph "💎 Core Technologies"
-        RUBY[💎 Ruby 3.4.5<br/>Language Runtime]
-        RAILS[🚂 Rails 8.0.3<br/>Web Framework]
-        PG[🐘 PostgreSQL 17<br/>Database]
-    end
-    
-    subgraph "🔌 API & Integration"
-        HTTP[🌐 Net::HTTP<br/>Ruby Standard Library]
-        JSON[📋 JSON Parser<br/>Built-in Ruby JSON]
-        OJ[⚡ OJ 3.15.0<br/>Fast JSON Parser]
-    end
-    
-    subgraph "📨 Event Streaming"
-        KAFKA[📋 Kafka<br/>Event Streaming]
-        RDKAFKA[🚀 RDKafka 0.23.1<br/>Kafka Client]
-        RACECAR[🏎️ Racecar 2.12<br/>Kafka Consumer]
-    end
-    
-    subgraph "🧪 Testing & Quality"
-        RSPEC[🧪 RSpec Rails 8.0<br/>Testing Framework]
-        SIMPLECOV[📊 SimpleCov 0.22.0<br/>Code Coverage]
-        FACTORY[🏭 FactoryBot Rails 6.5<br/>Test Data]
-        FAKER[🎭 Faker 3.5<br/>Fake Data Generator]
-        SHOULDA[✅ Shoulda Matchers 6.5<br/>Test Matchers]
-        BRAKEMAN[🛡️ Brakeman<br/>Security Scanner]
-        RUBOCOP[🎨 RuboCop Omakase<br/>Code Style]
-    end
-    
-    subgraph "⚙️ State & Workflow"
-        AASM[🎯 AASM 5.5<br/>State Machine]
-    end
-    
-    subgraph "🛠️ Development Tools"
-        TIDEWAVE[🌊 Tidewave 0.3.1<br/>Development Helpers]
-    end
-    
-    %% Core Dependencies
-    RUBY --> RAILS
-    RAILS --> PG
-    
-    %% API Integration Flow
-    RAILS --> HTTP
-    HTTP --> JSON
-    JSON --> OJ
-    
-    %% Event Streaming Flow
-    RAILS --> RDKAFKA
-    RDKAFKA --> KAFKA
-    RDKAFKA --> RACECAR
-    
-    %% Testing Dependencies
-    RAILS --> RSPEC
-    RSPEC --> FACTORY
-    RSPEC --> FAKER
-    RSPEC --> SHOULDA
-    RSPEC --> SIMPLECOV
-    
-    %% State Management
-    RAILS --> AASM
-    
-    %% Development Tools
-    RAILS --> TIDEWAVE
-    
-    %% Quality Tools
-    RAILS --> BRAKEMAN
-    RAILS --> RUBOCOP
-    
-    %% Styling
-    classDef coreStyle fill:#E8F4FD,stroke:#4A90E2,stroke-width:3px
-    classDef apiStyle fill:#F0F8E8,stroke:#67C52A,stroke-width:2px
-    classDef eventStyle fill:#FDF2E8,stroke:#F39C12,stroke-width:2px
-    classDef testStyle fill:#F8E8F8,stroke:#9B59B6,stroke-width:2px
-    classDef stateStyle fill:#E8F6F3,stroke:#1ABC9C,stroke-width:2px
-    classDef devStyle fill:#FEF9E7,stroke:#F1C40F,stroke-width:2px
-    classDef frontendStyle fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
-    classDef infraStyle fill:#EBF5FB,stroke:#3498DB,stroke-width:2px
-    
-    class RUBY,RAILS,PG coreStyle
-    class HTTP,JSON,OJ apiStyle
-    class KAFKA,RDKAFKA,RACECAR eventStyle
-    class RSPEC,SIMPLECOV,FACTORY,FAKER,SHOULDA,BRAKEMAN,RUBOCOP testStyle
-    class AASM stateStyle
-    class TIDEWAVE devStyle
+  subgraph "💎 Core Technologies"
+    RUBY[💎 Ruby 3.4.5<br/>Language Runtime]
+    RAILS[🚂 Rails 8.0.3<br/>Web Framework]
+    PG[🐘 PostgreSQL 17<br/>Database]
+    REDIS[🟥 Redis<br/>Cache & Queue]
+  end
+
+  subgraph "🔌 API & Integration"
+    HTTP[🌐 Net::HTTP<br/>Ruby Standard Library]
+    OJ[⚡ OJ 3.15.0<br/>Fast JSON Parser]
+  end
+
+  subgraph "📨 Event Streaming"
+    KAFKA[📋 Kafka<br/>Event Streaming]
+    RDKAFKA[🚀 RDKafka 0.23.1<br/>Kafka Client]
+    RACECAR[🏎️ Racecar 2.12<br/>Kafka Consumer]
+  end
+
+  subgraph "🧪 Testing & Quality"
+    RSPEC[🧪 RSpec Rails 8.0<br/>Testing Framework]
+    SIMPLECOV[📊 SimpleCov 0.22.0<br/>Code Coverage]
+    FACTORY[🏭 FactoryBot Rails 6.5<br/>Test Data]
+    FAKER[🎭 Faker 3.5<br/>Fake Data Generator]
+    SHOULDA[✅ Shoulda Matchers 6.5<br/>Test Matchers]
+    BRAKEMAN[🛡️ Brakeman<br/>Security Scanner]
+    RUBOCOP[🎨 RuboCop Omakase<br/>Code Style]
+    RSPECRETRY[🔁 RSpec Retry<br/>Flaky Test Handler]
+  end
+
+  subgraph "⚙️ State & Workflow"
+    AASM[🎯 AASM 5.5<br/>State Machine]
+  end
+
+  subgraph "🛠️ Development Tools"
+    TIDEWAVE[🌊 Tidewave 0.3.1<br/>Development Helpers]
+    KAMAL[🚀 Kamal<br/>Docker Deploy]
+  end
+
+  %% Core Dependencies
+  RUBY --> RAILS
+  RAILS --> PG
+  RAILS --> REDIS
+
+  %% API Integration Flow
+  RAILS --> HTTP
+  HTTP --> OJ
+
+  %% Event Streaming Flow
+  RAILS --> RDKAFKA
+  RDKAFKA --> KAFKA
+  RDKAFKA --> RACECAR
+
+  %% Testing Dependencies
+  RAILS --> RSPEC
+  RSPEC --> FACTORY
+  RSPEC --> FAKER
+  RSPEC --> SHOULDA
+  RSPEC --> SIMPLECOV
+  RSPEC --> RSPECRETRY
+
+  %% State Management
+  RAILS --> AASM
+
+  %% Development Tools
+  RAILS --> TIDEWAVE
+  RAILS --> KAMAL
+
+  %% Quality Tools
+  RAILS --> BRAKEMAN
+  RAILS --> RUBOCOP
+
+  %% Styling
+  classDef coreStyle fill:#E8F4FD,stroke:#4A90E2,stroke-width:3px
+  classDef apiStyle fill:#F0F8E8,stroke:#67C52A,stroke-width:2px
+  classDef eventStyle fill:#FDF2E8,stroke:#F39C12,stroke-width:2px
+  classDef testStyle fill:#F8E8F8,stroke:#9B59B6,stroke-width:2px
+  classDef stateStyle fill:#E8F6F3,stroke:#1ABC9C,stroke-width:2px
+  classDef devStyle fill:#FEF9E7,stroke:#F1C40F,stroke-width:2px
+  classDef infraStyle fill:#EBF5FB,stroke:#3498DB,stroke-width:2px
+
+  class RUBY,RAILS,PG,REDIS coreStyle
+  class HTTP,OJ apiStyle
+  class KAFKA,RDKAFKA,RACECAR eventStyle
+  class RSPEC,SIMPLECOV,FACTORY,FAKER,SHOULDA,BRAKEMAN,RUBOCOP,RSPECRETRY testStyle
+  class AASM stateStyle
+  class TIDEWAVE,KAMAL devStyle
 ```
 
 
