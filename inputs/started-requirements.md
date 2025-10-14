@@ -243,6 +243,7 @@ graph TD
         StockServicesClient["📡 StockServicesClient<br/>HTTP Adapter"]
         KafkaConsumer["📥 Kafka Consumer<br/>Event Ingestion"]
         KafkaProducer["📤 Kafka Producer<br/>Event Publishing"]
+        KafkaTopic["🎪 Kafka Topic<br/>anubis.event.subscription.sent"]
         MessageBroker["📨 Message Broker<br/>Event Router"]
         ExternalClient1["🔗 External Client 1<br/>Institution Adapter"]
         ExternalClient2["🔗 External Client 2<br/>Partner Adapter"]
@@ -261,42 +262,34 @@ graph TD
     end
 
     %% Data Flow Connections
-    %% Lead ingestion flow
     Montilla -->|"📤 Create Lead"| QuerCRM
     QueroBolsa -->|"📦 External Order"| QuerCRM
     QuerCRM -->|"📨 Lead Events"| KafkaConsumer
     KafkaConsumer -->|"🔄 Process Events"| MessageBroker
     MessageBroker -->|"📋 Evaluate Lead"| LeadEvaluationService
 
-    %% Business processing flow
     LeadEvaluationService -->|"🎯 Match Lead"| MatchService
     LeadEvaluationService -->|"📨 Kafka Events"| SubscriptionService
 
-    %% Subscription orchestration
     SubscriptionService -->|"📡 Publish Events"| EventService
     SubscriptionService -->|"💾 Store Data"| Database
 
-    %% External integrations
     ExternalService1 -->|"🔗 API Calls"| ExternalClient1
     ExternalService2 -->|"🔗 API Calls"| ExternalClient2
     ExternalClient1 -->|"📤 Send Data"| ExternalAPI1
     ExternalClient2 -->|"📤 Send Data"| ExternalAPI2
 
-    %% Event publishing
-    KafkaProducer -->|"📋 Subscription Events"| CRM
+    %% Event publishing with Kafka topic
+    EventService ==> |"📨 Publish Events"| KafkaProducer
+    KafkaProducer ==> |"🎪 To Topic"| KafkaTopic
+    KafkaTopic ==> |"👥 Consumed by"| KafkaConsumer
+    KafkaTopic -->|"📋 Subscription Events"| CRM
 
-    %% Stock data flow
     StockServicesClient ==> |"🌐 Net::HTTP Client"| StockAPI
     OffersServices ==> |"Stock Data"| StockServicesClient
 
-    %% Business processing flow
     OffersServices ==> |"🎁 Offer Data"| SubscriptionService
-
-    %% Subscription orchestration
     SubscriptionService ==> |"📡 Publish Events"| EventService
-
-    %% Event publishing
-    EventService ==> |"📨 Publish Events"| KafkaProducer
 
     %% Styling for visual clarity
     classDef externalSystem fill:#FFE5B4,stroke:#F39C12,stroke-width:2px,color:#2C3E50
@@ -306,7 +299,7 @@ graph TD
     classDef highlightRedBorder fill:#E3F2FD,stroke:#d32f2f,stroke-width:3px,color:#2C3E50
 
     class Montilla,QueroBolsa,StockAPI,ExternalAPI1,ExternalAPI2,CRM,QuerCRM externalSystem
-    class StockServicesClient,KafkaConsumer,KafkaProducer,MessageBroker,ExternalClient1,ExternalClient2 infrastructure
+    class StockServicesClient,KafkaConsumer,KafkaProducer,KafkaTopic,MessageBroker,ExternalClient1,ExternalClient2 infrastructure
     class OffersServices,SubscriptionService,LeadEvaluationService,MatchService,ExternalService1,ExternalService2,EventService domainService
     class Database database
     class StockServicesClient,EventService,OffersServices highlightRedBorder
