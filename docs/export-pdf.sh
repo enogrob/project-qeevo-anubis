@@ -16,7 +16,7 @@ pandoc "$1" -o temp.html \
 echo "📄 Converting HTML to PDF with Chrome..."
 
 # Convert HTML to PDF with Chrome
-/usr/bin/google-chrome-stable \
+/usr/bin/chromium-browser \
   --headless \
   --disable-gpu \
   --no-sandbox \

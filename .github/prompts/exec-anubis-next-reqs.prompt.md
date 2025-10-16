@@ -1,27 +1,36 @@
 ---
-mode: 'ask'
+mode: 'agent'
 ---
 
-# Update Codebase According Appointed Requirements for Anubis Rails Application
+# Update Codebase According the next Requirements for Anubis Rails Application
 
 ## Objective
-Update the Rails application project according to the entered reference requirements.
+Update the Rails application project according to the next new requirements.
 
 ## Context
 Anubis is a microservice responsible for orchestrating the delivery of paying student data to higher education institution APIs (Kroton, Estácio, etc.). It manages enrollment flows from Quero Bolsa and new marketplaces, organizing payloads and logging structured events with retry mechanisms.
 
 ## Input Sources
-- **Base Requirements**: #file:inputs/started-requirements.md (Contains description, ER diagrams, and sketched architecture). This is the document of the initial requirements which states the tech stach of the codebase its Models and Overall architecture and .
 - **Epic Documentation**: #file:inputs/epico.md (High-level project epic and goals)
-- **Existing Codebase**: #folder:src/anubis . This repository  contains all the required Gems already installed and configured. Inclusive the database models for PostgreSQL.
+- **Existing Codebase**: #folder:src/anubis . This repository reflects the current state of the Anubis application.
+- **Existing Documentation**: #file:inputs/started-requirements.md
+- **Previous Feature implemented**: #file:issues/#4277/4277.md
+- **Next Feature to be implemented**: #file:issues/#4278/4278.md
 - **Reference Architectures**:
   - Similar microservice pattern and stack: #folder:inputs/repositories/quero-deals
   - Integration examples: #folder:inputs/repositories/estacio-lead-integration
   - Integration examples: #folder:inputs/repositories/kroton-lead-integration
 
-## Requirements Specification
+## Requirements
 
-### 1. Diagram Requirements
+- Implement all features described in the current feature file (#file:issues/#4278/4278.md).
+- Follow best practices for code quality, security, and performance.
+- Ensure the application is well-documented, including code comments and updated README files.
+- Write unit and integration tests to cover new functionalities. For unit tests add under #folder:src/anubis/spec folder and integration in #folder:src/anubis/script for the new services.
+- Use the reference architectures as a guide for structuring the code and implementing features if required.
+- Ensure compatibility with the latest stable versions of Ruby and Rails.
+- Maintain a clean and organized codebase, adhering to standard conventions and patterns.
+- After implemented, update accordingly the documentation in #file:inputs/started-requirements.md to reflect the new state of the application and also #file:docs/test-specifications.md if necessary.
 
 **Visual Standards:**
 - Use pastel color themes compatible with both dark and light browser themes
